@@ -202,13 +202,9 @@ class Lexer {
   }
 }
 
-export const lex = (input: string): Token[] => {
-  const tokens: Token[] = [];
-  const lexer = new Lexer(input);
-  let token = lexer.nextToken();
-  while (token) {
-    tokens.push(token);
-    token = lexer.nextToken();
-  }
-  return tokens;
+export const lexer: (input: string) => {
+  nextToken: () => Token | undefined;
+} = (input) => {
+  const instance = new Lexer(input);
+  return { nextToken: () => instance.nextToken() };
 };

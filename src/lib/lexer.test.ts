@@ -1,7 +1,18 @@
-import { lex } from './lexer';
+import { lexer } from './lexer';
 import { Token, TokenType } from './token';
 
 describe('lexer', () => {
+  const lex = (input: string): Token[] => {
+    const tokens: Token[] = [];
+    const l = lexer(input);
+    let token = l.nextToken();
+    while (token) {
+      tokens.push(token);
+      token = l.nextToken();
+    }
+    return tokens;
+  };
+
   it('testNextToken', () => {
     const input = `
     let five = 5;
