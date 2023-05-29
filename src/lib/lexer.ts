@@ -1,14 +1,12 @@
-import { TokenWithLiterals, TokenType } from './token';
-import { Token } from './token';
+import { TokenWithLiterals, TokenType } from './model/token';
+import { Token } from './model/token';
 
 const isNumber = (char: string) => /^[0-9]$/.test(char);
 const isLetter = (char: string) => /^[a-zA-Z]$/.test(char);
 const isWhitespace = (char: string) => /^\s$/.test(char);
 const eof = '\0';
 
-const findKeywordToken = (
-  string: string
-): Exclude<Token, TokenWithLiterals> | undefined => {
+const findKeywordToken = (string: string): Exclude<Token, TokenWithLiterals> | undefined => {
   switch (string) {
     case 'fn': {
       return { type: TokenType.Function };
@@ -60,7 +58,7 @@ class Lexer {
       case '=': {
         if (this.peekChar() === '=') {
           this.readChar();
-          token = { type: TokenType.Equals };
+          token = { type: TokenType.Equals, operator: '==' };
         } else {
           token = { type: TokenType.Assign };
         }
@@ -69,9 +67,9 @@ class Lexer {
       case '!': {
         if (this.peekChar() === '=') {
           this.readChar();
-          token = { type: TokenType.NotEquals };
+          token = { type: TokenType.NotEquals, operator: '!=' };
         } else {
-          token = { type: TokenType.Bang };
+          token = { type: TokenType.Bang, operator: '!' };
         }
         break;
       }
@@ -92,11 +90,11 @@ class Lexer {
         break;
       }
       case '+': {
-        token = { type: TokenType.Plus };
+        token = { type: TokenType.Plus, operator: '+' };
         break;
       }
       case '-': {
-        token = { type: TokenType.Minus };
+        token = { type: TokenType.Minus, operator: '-' };
         break;
       }
       case '{': {
@@ -108,27 +106,27 @@ class Lexer {
         break;
       }
       case '*': {
-        token = { type: TokenType.Asterisk };
+        token = { type: TokenType.Asterisk, operator: '*' };
         break;
       }
       case '/': {
-        token = { type: TokenType.Slash };
+        token = { type: TokenType.Slash, operator: '/' };
         break;
       }
       case '<': {
-        token = { type: TokenType.LessThan };
+        token = { type: TokenType.LessThan, operator: '<' };
         break;
       }
       case '>': {
-        token = { type: TokenType.GreaterThan };
+        token = { type: TokenType.GreaterThan, operator: '>' };
         break;
       }
       case '==': {
-        token = { type: TokenType.Equals };
+        token = { type: TokenType.Equals, operator: '==' };
         break;
       }
       case '!=': {
-        token = { type: TokenType.NotEquals };
+        token = { type: TokenType.NotEquals, operator: '!=' };
         break;
       }
       case eof: {

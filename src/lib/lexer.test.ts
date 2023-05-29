@@ -1,5 +1,5 @@
 import { lexer } from './lexer';
-import { Token, TokenType } from './token';
+import { Token, TokenType } from './model/token';
 
 describe('lexer', () => {
   const lex = (input: string): Token[] => {
@@ -60,7 +60,7 @@ describe('lexer', () => {
       { type: TokenType.RightParenthesis },
       { type: TokenType.LeftBrace },
       { type: TokenType.Identifier, literal: 'x' },
-      { type: TokenType.Plus },
+      { type: TokenType.Plus, operator: '+' },
       { type: TokenType.Identifier, literal: 'y' },
       { type: TokenType.Semicolon },
       { type: TokenType.RightBrace },
@@ -77,24 +77,24 @@ describe('lexer', () => {
       { type: TokenType.RightParenthesis },
       { type: TokenType.Semicolon },
 
-      { type: TokenType.Bang },
-      { type: TokenType.Minus },
-      { type: TokenType.Slash },
-      { type: TokenType.Asterisk },
+      { type: TokenType.Bang, operator: '!' },
+      { type: TokenType.Minus, operator: '-' },
+      { type: TokenType.Slash, operator: '/' },
+      { type: TokenType.Asterisk, operator: '*' },
       { type: TokenType.Integer, literal: '5' },
       { type: TokenType.Semicolon },
 
       { type: TokenType.Integer, literal: '5' },
-      { type: TokenType.LessThan },
+      { type: TokenType.LessThan, operator: '<' },
       { type: TokenType.Integer, literal: '10' },
-      { type: TokenType.GreaterThan },
+      { type: TokenType.GreaterThan, operator: '>' },
       { type: TokenType.Integer, literal: '5' },
       { type: TokenType.Semicolon },
 
       { type: TokenType.If },
       { type: TokenType.LeftParenthesis },
       { type: TokenType.Integer, literal: '5' },
-      { type: TokenType.LessThan },
+      { type: TokenType.LessThan, operator: '<' },
       { type: TokenType.Integer, literal: '10' },
       { type: TokenType.RightParenthesis },
       { type: TokenType.LeftBrace },
@@ -110,12 +110,12 @@ describe('lexer', () => {
       { type: TokenType.RightBrace },
 
       { type: TokenType.Integer, literal: '10' },
-      { type: TokenType.Equals },
+      { type: TokenType.Equals, operator: '==' },
       { type: TokenType.Integer, literal: '10' },
       { type: TokenType.Semicolon },
 
       { type: TokenType.Integer, literal: '10' },
-      { type: TokenType.NotEquals },
+      { type: TokenType.NotEquals, operator: '!=' },
       { type: TokenType.Integer, literal: '9' },
       { type: TokenType.Semicolon },
 

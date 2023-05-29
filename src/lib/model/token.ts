@@ -1,0 +1,162 @@
+export enum TokenType {
+  Identifier = 'Identifier',
+  Integer = 'Integer',
+  Illegal = 'Illegal',
+  Eof = 'Eof',
+  Assign = 'Assign',
+  Plus = 'Plus',
+  Minus = 'Minus',
+  Bang = 'Bang',
+  Asterisk = 'Asterisk',
+  Slash = 'Slash',
+  LessThan = 'LessThan',
+  GreaterThan = 'GreaterThan',
+  Comma = 'Comma',
+  Semicolon = 'Semicolon',
+  LeftParenthesis = 'LeftParenthesis',
+  RightParenthesis = 'RightParenthesis',
+  LeftBrace = 'LeftBrace',
+  RightBrace = 'RightBrace',
+  Function = 'Function',
+  Let = 'Let',
+  If = 'If',
+  Else = 'Else',
+  Return = 'Return',
+  True = 'True',
+  False = 'False',
+  Equals = 'Equals',
+  NotEquals = 'NotEquals',
+}
+export type IdentifierToken = {
+  type: TokenType.Identifier;
+  literal: string;
+};
+export type IntegerToken = {
+  type: TokenType.Integer;
+  literal: string;
+};
+export type IllegalToken = {
+  type: TokenType.Illegal;
+};
+export type EofToken = {
+  type: TokenType.Eof;
+};
+export type AssignToken = {
+  type: TokenType.Assign;
+};
+export type PlusToken = {
+  type: TokenType.Plus;
+  operator: '+';
+};
+export type MinusToken = {
+  type: TokenType.Minus;
+  operator: '-';
+};
+export type BangToken = {
+  type: TokenType.Bang;
+  operator: '!';
+};
+export type AsteriskToken = {
+  type: TokenType.Asterisk;
+  operator: '*';
+};
+export type SlashToken = {
+  type: TokenType.Slash;
+  operator: '/';
+};
+export type LessThanToken = {
+  type: TokenType.LessThan;
+  operator: '<';
+};
+export type GreaterThanToken = {
+  type: TokenType.GreaterThan;
+  operator: '>';
+};
+export type CommaToken = {
+  type: TokenType.Comma;
+};
+export type SemicolonToken = {
+  type: TokenType.Semicolon;
+};
+export type LeftParenthesisToken = {
+  type: TokenType.LeftParenthesis;
+};
+export type RightParenthesisToken = {
+  type: TokenType.RightParenthesis;
+};
+export type LeftBraceToken = {
+  type: TokenType.LeftBrace;
+};
+export type RightBraceToken = {
+  type: TokenType.RightBrace;
+};
+export type FunctionToken = {
+  type: TokenType.Function;
+};
+export type LetToken = {
+  type: TokenType.Let;
+};
+export type IfToken = {
+  type: TokenType.If;
+};
+export type ElseToken = {
+  type: TokenType.Else;
+};
+export type ReturnToken = {
+  type: TokenType.Return;
+};
+export type TrueToken = {
+  type: TokenType.True;
+};
+export type FalseToken = {
+  type: TokenType.False;
+};
+export type EqualsToken = {
+  type: TokenType.Equals;
+  operator: '==';
+};
+export type NotEqualsToken = {
+  type: TokenType.NotEquals;
+  operator: '!=';
+};
+
+export type TokenWithLiterals = IdentifierToken | IntegerToken;
+export type TokenWithoutLiterals =
+  | IllegalToken
+  | EofToken
+  | AssignToken
+  | PlusToken
+  | MinusToken
+  | BangToken
+  | AsteriskToken
+  | SlashToken
+  | LessThanToken
+  | GreaterThanToken
+  | CommaToken
+  | SemicolonToken
+  | LeftParenthesisToken
+  | RightParenthesisToken
+  | LeftBraceToken
+  | RightBraceToken
+  | FunctionToken
+  | LetToken
+  | IfToken
+  | ElseToken
+  | ReturnToken
+  | TrueToken
+  | FalseToken
+  | EqualsToken
+  | NotEqualsToken;
+
+export type Token = TokenWithLiterals | TokenWithoutLiterals;
+
+export type PrefixToken = BangToken | MinusToken;
+export type InfixToken =
+  | EqualsToken
+  | NotEqualsToken
+  | LessThanToken
+  | GreaterThanToken
+  | PlusToken
+  | MinusToken
+  | SlashToken
+  | AsteriskToken;

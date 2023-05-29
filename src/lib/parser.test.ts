@@ -1,82 +1,144 @@
 import { parse } from './parser';
 
 describe('parser', () => {
-  test('testLetStatement', () => {
+  test('let statements', () => {
     const input = `
     let x = 5;
     let y = 10;
-    let foobar = 838383;
+    let foobar = 123;
   `;
 
     const result = parse(input);
-    expect(result.errors).toEqual([]);
-    expect(result.result).toMatchInlineSnapshot(
-      {
-        astType: 'Program',
-        body: [
-          {
-            name: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'x',
-            },
-            statementType: 'Let',
-            value: null,
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          name: {
+            astType: 'Expression',
+            expressionType: 'Identifier',
+            value: 'x',
           },
-          {
-            name: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'y',
-            },
-            statementType: 'Let',
-            value: null,
+          statementType: 'Let',
+          value: {
+            astType: 'Expression',
+            expressionType: 'IntegerLiteral',
+            value: 5,
           },
-          {
-            name: {
+        },
+        {
+          astType: 'Statement',
+          name: {
+            astType: 'Expression',
+            expressionType: 'Identifier',
+            value: 'y',
+          },
+          statementType: 'Let',
+          value: {
+            astType: 'Expression',
+            expressionType: 'IntegerLiteral',
+            value: 10,
+          },
+        },
+        {
+          astType: 'Statement',
+          name: {
+            astType: 'Expression',
+            expressionType: 'Identifier',
+            value: 'foobar',
+          },
+          statementType: 'Let',
+          value: {
+            astType: 'Expression',
+            expressionType: 'IntegerLiteral',
+            value: 123,
+          },
+        },
+      ],
+    });
+  });
+  it('prefix', () => {
+    const input = `
+     !5;
+     -15;
+     !foobar;
+     !true;
+     !false;
+    `;
+    expect(parse(input)).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'PrefixExpression',
+            operator: '!',
+            right: {
+              astType: 'Expression',
+              expressionType: 'IntegerLiteral',
+              value: 5,
+            },
+          },
+          statementType: 'Expression',
+        },
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'PrefixExpression',
+            operator: '-',
+            right: {
+              astType: 'Expression',
+              expressionType: 'IntegerLiteral',
+              value: 15,
+            },
+          },
+          statementType: 'Expression',
+        },
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'PrefixExpression',
+            operator: '!',
+            right: {
               astType: 'Expression',
               expressionType: 'Identifier',
               value: 'foobar',
             },
-            statementType: 'Let',
-            value: null,
           },
-        ],
-      },
-      `
-      {
-        "astType": "Program",
-        "body": [
-          {
-            "name": {
-              "astType": "Expression",
-              "expressionType": "Identifier",
-              "value": "x",
+          statementType: 'Expression',
+        },
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'PrefixExpression',
+            operator: '!',
+            right: {
+              astType: 'Expression',
+              expressionType: 'BooleanLiteral',
+              value: true,
             },
-            "statementType": "Let",
-            "value": null,
           },
-          {
-            "name": {
-              "astType": "Expression",
-              "expressionType": "Identifier",
-              "value": "y",
+          statementType: 'Expression',
+        },
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'PrefixExpression',
+            operator: '!',
+            right: {
+              astType: 'Expression',
+              expressionType: 'BooleanLiteral',
+              value: false,
             },
-            "statementType": "Let",
-            "value": null,
           },
-          {
-            "name": {
-              "astType": "Expression",
-              "expressionType": "Identifier",
-              "value": "foobar",
-            },
-            "statementType": "Let",
-            "value": null,
-          },
-        ],
-      }
-    `
-    );
+          statementType: 'Expression',
+        },
+      ],
+    });
   });
 });

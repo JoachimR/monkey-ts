@@ -30,11 +30,7 @@ export type BlockStatement = StatementBase & {
   statements: Statement[];
 };
 
-export type Statement =
-  | LetStatement
-  | ReturnStatement
-  | ExpressionStatement
-  | BlockStatement;
+export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatement;
 
 export enum ExpressionType {
   Identifier = 'Identifier',
