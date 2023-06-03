@@ -200,7 +200,7 @@ class Lexer {
   }
 }
 
-export const lexer: (input: string) => {
+export const lex: (input: string) => {
   nextToken: () => Token | undefined;
 } = (input) => {
   const instance = new Lexer(input);

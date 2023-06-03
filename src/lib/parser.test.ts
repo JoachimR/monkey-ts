@@ -1,4 +1,6 @@
+import { lex } from './lexer';
 import { parse } from './parser';
+import { evaluate } from './evaluate';
 
 describe('parser', () => {
   test('let statements', () => {
@@ -8,7 +10,7 @@ describe('parser', () => {
     let foobar = 123;
   `;
 
-    const result = parse(input);
+    const result = parse(lex(input));
     expect(result).toEqual({
       astType: 'Program',
       body: [
@@ -65,7 +67,7 @@ describe('parser', () => {
      !true;
      !false;
     `;
-    expect(parse(input)).toEqual({
+    expect(parse(lex(input))).toEqual({
       astType: 'Program',
       body: [
         {
@@ -137,6 +139,152 @@ describe('parser', () => {
             },
           },
           statementType: 'Expression',
+        },
+      ],
+    });
+  });
+
+  it('function call', () => {
+    const input = 'add(5, 3);';
+    expect(parse(lex(input))).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'CallExpression',
+            func: {
+              astType: 'Expression',
+              expressionType: 'Identifier',
+              value: 'add',
+            },
+            args: [
+              {
+                astType: 'Expression',
+                expressionType: 'IntegerLiteral',
+                value: 5,
+              },
+              {
+                astType: 'Expression',
+                expressionType: 'IntegerLiteral',
+                value: 3,
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
+
+  it('infix', () => {
+    const input = `if (x < y) { x }`;
+    expect(parse(lex(input))).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'IfExpression',
+            condition: {
+              astType: 'Expression',
+              expressionType: 'InfixExpression',
+              left: {
+                astType: 'Expression',
+                expressionType: 'Identifier',
+                value: 'x',
+              },
+              operator: '<',
+              right: {
+                astType: 'Expression',
+                expressionType: 'Identifier',
+                value: 'y',
+              },
+            },
+            consequence: {
+              astType: 'Statement',
+              statementType: 'Block',
+              statements: [
+                {
+                  astType: 'Statement',
+                  statementType: 'Expression',
+                  expression: {
+                    astType: 'Expression',
+                    expressionType: 'Identifier',
+                    value: 'x',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('parses function calls', () => {
+    const input = 'let identity = fn(x) { x; }; identity(5);';
+    const result = parse(lex(input));
+    expect(result).toMatchInlineSnapshot({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Let',
+          name: {
+            astType: 'Expression',
+            expressionType: 'Identifier',
+            value: 'identity',
+          },
+          value: {
+            astType: 'Expression',
+            expressionType: 'FunctionLiteral',
+            parameters: [
+              {
+                astType: 'Expression',
+                expressionType: 'Identifier',
+                value: 'x',
+              },
+            ],
+            body: {
+              astType: 'Statement',
+              statementType: 'Block',
+              statements: [
+                {
+                  astType: 'Statement',
+                  statementType: 'Expression',
+                  expression: {
+                    astType: 'Expression',
+                    expressionType: 'Identifier',
+                    value: 'x',
+                  },
+                },
+              ],
+            },
+          },
+        },
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'CallExpression',
+            args: [
+              {
+                astType: 'Expression',
+                expressionType: 'IntegerLiteral',
+                value: 5,
+              },
+            ],
+            func: {
+              astType: 'Expression',
+              expressionType: 'Identifier',
+              value: 'identity',
+            },
+          },
         },
       ],
     });

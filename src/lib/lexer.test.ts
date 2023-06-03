@@ -1,10 +1,10 @@
-import { lexer } from './lexer';
+import { lex } from './lexer';
 import { Token, TokenType } from './model/token';
 
 describe('lexer', () => {
-  const lex = (input: string): Token[] => {
+  const actual = (input: string): Token[] => {
     const tokens: Token[] = [];
-    const l = lexer(input);
+    const l = lex(input);
     let token = l.nextToken();
     while (token) {
       tokens.push(token);
@@ -122,6 +122,35 @@ describe('lexer', () => {
       { type: TokenType.Eof },
     ];
 
-    expect(lex(input)).toEqual(expected);
+    expect(actual(input)).toEqual(expected);
+  });
+
+  it('function call', () => {
+    expect(actual('add(5,3)')).toEqual([
+      {
+        literal: 'add',
+        type: 'Identifier',
+      },
+      {
+        type: 'LeftParenthesis',
+      },
+      {
+        literal: '5',
+        type: 'Integer',
+      },
+      {
+        type: 'Comma',
+      },
+      {
+        literal: '3',
+        type: 'Integer',
+      },
+      {
+        type: 'RightParenthesis',
+      },
+      {
+        type: 'Eof',
+      },
+    ]);
   });
 });

@@ -1,3 +1,13 @@
+export const BangOperator = '!';
+export const MinusOperator = '-';
+export const EqualsOperator = '==';
+export const NotEqualsOperator = '!=';
+export const LessThanOperator = '<';
+export const GreaterThanOperator = '>';
+export const PlusOperator = '+';
+export const AsteriskOperator = '*';
+export const SlashOperator = '/';
+
 export enum TokenType {
   Identifier = 'Identifier',
   Integer = 'Integer',
@@ -46,31 +56,31 @@ export type AssignToken = {
 };
 export type PlusToken = {
   type: TokenType.Plus;
-  operator: '+';
+  operator: typeof PlusOperator;
 };
 export type MinusToken = {
   type: TokenType.Minus;
-  operator: '-';
+  operator: typeof MinusOperator;
 };
 export type BangToken = {
   type: TokenType.Bang;
-  operator: '!';
+  operator: typeof BangOperator;
 };
 export type AsteriskToken = {
   type: TokenType.Asterisk;
-  operator: '*';
+  operator: typeof AsteriskOperator;
 };
 export type SlashToken = {
   type: TokenType.Slash;
-  operator: '/';
+  operator: typeof SlashOperator;
 };
 export type LessThanToken = {
   type: TokenType.LessThan;
-  operator: '<';
+  operator: typeof LessThanOperator;
 };
 export type GreaterThanToken = {
   type: TokenType.GreaterThan;
-  operator: '>';
+  operator: typeof GreaterThanOperator;
 };
 export type CommaToken = {
   type: TokenType.Comma;
@@ -113,11 +123,11 @@ export type FalseToken = {
 };
 export type EqualsToken = {
   type: TokenType.Equals;
-  operator: '==';
+  operator: typeof EqualsOperator;
 };
 export type NotEqualsToken = {
   type: TokenType.NotEquals;
-  operator: '!=';
+  operator: typeof NotEqualsOperator;
 };
 
 export type TokenWithLiterals = IdentifierToken | IntegerToken;

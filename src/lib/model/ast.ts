@@ -1,3 +1,5 @@
+import { InfixToken, PrefixToken } from './token';
+
 export enum StatementType {
   Let = 'Let',
   Return = 'Return',
@@ -60,6 +62,14 @@ export type IntegerLiteralExpression = ExpressionBase & {
   expressionType: ExpressionType.IntegerLiteral;
   value: number;
 };
+export type StringLiteralExpression = ExpressionBase & {
+  expressionType: ExpressionType.StringLiteral;
+  value: string;
+};
+export type ArrayLiteralExpression = ExpressionBase & {
+  expressionType: ExpressionType.ArrayLiteral;
+  elements: Expression[];
+};
 
 export type BooleanLiteralExpression = ExpressionBase & {
   expressionType: ExpressionType.BooleanLiteral;
@@ -74,13 +84,13 @@ export type FunctionLiteralExpression = ExpressionBase & {
 
 export type PrefixExpression = ExpressionBase & {
   expressionType: ExpressionType.PrefixExpression;
-  operator: string;
+  operator: PrefixToken['operator'];
   right: Expression;
 };
 
 export type InfixExpression = ExpressionBase & {
   expressionType: ExpressionType.InfixExpression;
-  operator: string;
+  operator: InfixToken['operator'];
   left: Expression;
   right: Expression;
 };
@@ -101,6 +111,8 @@ export type CallExpression = ExpressionBase & {
 export type Expression =
   | IdentifierExpression
   | IntegerLiteralExpression
+  | StringLiteralExpression
+  | ArrayLiteralExpression
   | BooleanLiteralExpression
   | FunctionLiteralExpression
   | PrefixExpression

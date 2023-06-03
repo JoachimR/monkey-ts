@@ -1,5 +1,5 @@
 import { assert } from '../utils';
-import { lexer } from './lexer';
+import { lex } from './lexer';
 import {
   AstNodeType,
   BlockStatement,
@@ -25,13 +25,13 @@ import { IdentifierToken, Token, TokenType } from './model/token';
 import { isIdentifierToken, isInfixToken, isIntegerToken, isPrefixToken } from './model/token-guards';
 
 enum Precedence {
-  Lowest = 'Lowest',
-  Equals = 'Equals',
-  LessThanGreaterThan = 'LessThan',
-  Sum = 'Sum',
-  Product = 'Product',
-  Prefix = 'Prefix',
-  Call = 'Call',
+  Lowest = 0,
+  Equals = 1,
+  LessThanGreaterThan = 2,
+  Sum = 3,
+  Product = 4,
+  Prefix = 5,
+  Call = 6,
 }
 
 const precedences: Partial<Record<TokenType, Precedence | undefined>> = {
@@ -43,6 +43,7 @@ const precedences: Partial<Record<TokenType, Precedence | undefined>> = {
   [TokenType.Minus]: Precedence.Sum,
   [TokenType.Slash]: Precedence.Product,
   [TokenType.Asterisk]: Precedence.Product,
+  [TokenType.LeftParenthesis]: Precedence.Call
 };
 
 class Parser {
@@ -56,7 +57,7 @@ class Parser {
     [TokenType.Minus]: this.parsePrefixExpression.bind(this),
     [TokenType.True]: this.parseBoolean.bind(this),
     [TokenType.False]: this.parseBoolean.bind(this),
-    [TokenType.LeftBrace]: this.parseGroupedExpression.bind(this),
+    [TokenType.LeftParenthesis]: this.parseGroupedExpression.bind(this),
     [TokenType.If]: this.parseIfExpression.bind(this),
     [TokenType.Function]: this.parseFunctionLiteral.bind(this),
   };
@@ -111,14 +112,7 @@ class Parser {
     const literal = (this.currentToken as IdentifierToken).literal;
     this.nextTokenExpecting(TokenType.Assign);
 
-    const name: IdentifierExpression = {
-      astType: AstNodeType.Expression,
-      expressionType: ExpressionType.Identifier,
-      value: literal,
-    };
-
     this.nextToken();
-
     const value = this.parseExpression(Precedence.Lowest);
 
     if (this.peekToken?.type === TokenType.Semicolon) {
@@ -128,16 +122,19 @@ class Parser {
     return {
       astType: AstNodeType.Statement,
       statementType: StatementType.Let,
-      name,
+      name: {
+        astType: AstNodeType.Expression,
+        expressionType: ExpressionType.Identifier,
+        value: literal,
+      },
       value,
     };
   }
 
   private parseReturnStatement(): ReturnStatement {
     this.nextToken();
-
     const value = this.parseExpression(Precedence.Lowest);
-    if (this.peekToken && this.peekToken.type === TokenType.Semicolon) {
+    if (this.peekToken?.type === TokenType.Semicolon) {
       this.nextToken();
     }
     return {
@@ -150,7 +147,7 @@ class Parser {
   private parseExpressionStatement(): ExpressionStatement {
     const expression = this.parseExpression(Precedence.Lowest);
 
-    while (this.currentToken.type !== TokenType.Semicolon) {
+    if (this.peekToken?.type === TokenType.Semicolon) {
       this.nextToken();
     }
 
@@ -163,13 +160,13 @@ class Parser {
 
   private parseExpression(precedence: Precedence): Expression {
     const prefixFn = this.prefixParseFns[this.currentToken.type];
-    assert(prefixFn, 'no function found to parse expression', {
+    assert(prefixFn, 'no prefix function found to parse expression', {
       token: this.currentToken,
     });
 
     let leftExp = prefixFn();
     while (this.peekToken?.type !== TokenType.Semicolon && precedence < this.peekPrecedence()) {
-      const infixFn = this.infixParseFns[this.currentToken.type];
+      const infixFn = this.peekToken ? this.infixParseFns[this.peekToken?.type] : undefined;
       if (!infixFn) {
         return leftExp;
       }
@@ -240,8 +237,11 @@ class Parser {
 
   private parseGroupedExpression(): Expression {
     assert(this.currentToken.type === TokenType.LeftParenthesis, 'invalid token', { token: this.currentToken });
+
     this.nextToken();
+
     const expression = this.parseExpression(Precedence.Lowest);
+
     this.nextTokenExpecting(TokenType.RightParenthesis);
     return expression;
   }
@@ -249,11 +249,12 @@ class Parser {
   private parseIfExpression(): IfExpression {
     assert(this.currentToken.type === TokenType.If, 'invalid token', { token: this.currentToken });
     this.nextTokenExpecting(TokenType.LeftParenthesis);
+    this.nextToken();
 
     const condition = this.parseExpression(Precedence.Lowest);
 
-    assert(this.nextTokenExpecting(TokenType.RightParenthesis));
-    assert(this.nextTokenExpecting(TokenType.LeftBrace));
+    this.nextTokenExpecting(TokenType.RightParenthesis);
+    this.nextTokenExpecting(TokenType.LeftBrace);
     const consequence = this.parseBlockStatement();
 
     if (this.peekToken?.type !== TokenType.Else) {
@@ -281,7 +282,7 @@ class Parser {
     assert(this.currentToken.type === TokenType.Function, 'invalid token', { token: this.currentToken });
     this.nextTokenExpecting(TokenType.LeftParenthesis);
     const parameters = this.parseFunctionParameters();
-    this.nextTokenExpecting(TokenType.RightParenthesis);
+    this.nextTokenExpecting(TokenType.LeftBrace);
     const body = this.parseBlockStatement();
     return {
       astType: AstNodeType.Expression,
@@ -296,6 +297,7 @@ class Parser {
       this.nextToken();
       return [];
     }
+    this.nextToken();
     assert(this.currentToken.type === TokenType.Identifier, 'invalid token', { token: this.currentToken });
     const parameters: IdentifierExpression[] = [];
     parameters.push({
@@ -335,7 +337,7 @@ class Parser {
     };
   }
 
-  private parseCallExpression(func: CallExpression['func']): CallExpression {
+  private parseCallExpression(func: IdentifierExpression | FunctionLiteralExpression): CallExpression {
     return {
       astType: AstNodeType.Expression,
       expressionType: ExpressionType.CallExpression,
@@ -392,7 +394,7 @@ class Parser {
   }
 }
 
-export function parse(input: string) {
-  const parser = new Parser(lexer(input));
+export function parse(lexer: { nextToken: () => Token | undefined }): Program {
+  const parser = new Parser(lexer);
   return parser.parseProgram();
 }
