@@ -5,9 +5,10 @@ export enum EvaluatedType {
   Null = 'Null',
   ReturnValue = 'ReturnValue',
   Integer = 'Integer',
-  Function = 'Function',
   Boolean = 'Boolean',
   String = 'String',
+  Function = 'Function',
+  BuiltIn = 'BuiltIn',
   Array = 'Array',
 }
 
@@ -42,6 +43,13 @@ export type EvaluatedToFunction = {
   environment: Environment;
 };
 
+export type BuiltInFn = (...args: EvaluatedTo[]) => EvaluatedTo;
+
+export type EvaluatedToBuiltIn = {
+  type: EvaluatedType.BuiltIn;
+  fn: BuiltInFn;
+};
+
 export type EvaluatedToArray = {
   type: EvaluatedType.Array;
   elements: EvaluatedTo[];
@@ -54,4 +62,5 @@ export type EvaluatedTo =
   | EvaluatedToNull
   | EvaluatedToReturnValue
   | EvaluatedToFunction
+  | EvaluatedToBuiltIn
   | EvaluatedToArray;

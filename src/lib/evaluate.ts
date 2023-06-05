@@ -1,4 +1,5 @@
 import { assert, checkExhaustive } from '../utils';
+import { builtins } from './builtins';
 import {
   ArrayLiteralExpression,
   BlockStatement,
@@ -23,6 +24,7 @@ import { Environment } from './model/environment';
 import {
   EvaluatedTo,
   EvaluatedToBoolean,
+  EvaluatedToBuiltIn,
   EvaluatedToFunction,
   EvaluatedToInteger,
   EvaluatedToString,
@@ -119,7 +121,7 @@ function evaluateStringLiteral(node: StringLiteralExpression): EvaluatedTo {
 }
 
 function evaluateIdentifierExpression(node: IdentifierExpression, env: Environment): EvaluatedTo {
-  const value = env.get(node.value);
+  const value = env.get(node.value) ?? builtins[node.value];
   assert(value !== undefined, 'identifier not found', { node, env });
   return value;
 }
@@ -134,12 +136,19 @@ function evaluateFunctionLiteralExpression(node: FunctionLiteralExpression, env:
 }
 
 function evaluateCallExpression(node: CallExpression, env: Environment): EvaluatedTo {
-  const func = evaluateExpression(node.func, env);
-  assert(func.type === EvaluatedType.Function, 'not a function', { node, env });
-  const callArguments = node.args.map((arg) => evaluateExpression(arg, env));
-  const extendedEnv = new Environment(func.environment, { parameters: func.parameters, values: callArguments });
+  const createArgs = () => node.args.map((arg) => evaluateExpression(arg, env));
 
-  const result = evaluateStatement(func.body, extendedEnv);
+  const expression = evaluateExpression(node.func, env);
+  if (expression.type === EvaluatedType.BuiltIn) {
+    return expression.fn(...createArgs());
+  }
+
+  assert(expression.type === EvaluatedType.Function, 'not a function', { expression });
+  const extendedEnv = new Environment(expression.environment, {
+    parameters: expression.parameters,
+    values: createArgs(),
+  });
+  const result = evaluateStatement(expression.body, extendedEnv);
   if (result.type === EvaluatedType.ReturnValue) {
     return result.value;
   }
@@ -278,26 +287,16 @@ function evaluateMinusOperatorExpression(argument: EvaluatedTo): EvaluatedToInte
 }
 
 function equals(a: EvaluatedTo, b: EvaluatedTo, env: Environment): boolean {
-  if (
-    a.type === EvaluatedType.Function ||
-    a.type === EvaluatedType.ReturnValue ||
-    b.type === EvaluatedType.Function ||
-    b.type === EvaluatedType.ReturnValue
-  ) {
-    return false;
-  }
-  if (a.type === EvaluatedType.Null || b.type === EvaluatedType.Null) {
-    return a.type === EvaluatedType.Null && b.type === EvaluatedType.Null;
-  }
-  if (a.type === EvaluatedType.Array || b.type === EvaluatedType.Array) {
-    return (
-      a.type === EvaluatedType.Array &&
+  return (
+    (a.type === EvaluatedType.Null && b.type === EvaluatedType.Null) ||
+    (a.type === EvaluatedType.Boolean && b.type === EvaluatedType.Boolean && a.value === b.value) ||
+    (a.type === EvaluatedType.String && b.type === EvaluatedType.String && a.value === b.value) ||
+    (a.type === EvaluatedType.Integer && b.type === EvaluatedType.Integer && a.value === b.value) ||
+    (a.type === EvaluatedType.Array &&
       b.type === EvaluatedType.Array &&
       a.elements.length === b.elements.length &&
-      a.elements.every((item, index) => equals(item, b.elements[index], env))
-    );
-  }
-  return a.value === b.value;
+      a.elements.every((item, index) => equals(item, b.elements[index], env)))
+  );
 }
 
 function greaterThan(left: Expression, right: Expression, env: Environment): boolean {

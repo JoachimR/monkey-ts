@@ -315,4 +315,33 @@ describe('parser', () => {
       ],
     });
   });
+  it('parses builtin functions', () => {
+    const input = 'len("Hello World");';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'CallExpression',
+            func: {
+              astType: 'Expression',
+              expressionType: 'Identifier',
+              value: 'len',
+            },
+            args: [
+              {
+                astType: 'Expression',
+                expressionType: 'StringLiteral',
+                value: 'Hello World',
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
 });

@@ -59,4 +59,12 @@ describe('evaluate', () => {
       value: 'Hello World',
     });
   });
+  it('evaluates builtin function ', () => {
+    const input = 'len("Hello World");';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({
+      type: 'Integer',
+      value: 11,
+    });
+  });
 });
