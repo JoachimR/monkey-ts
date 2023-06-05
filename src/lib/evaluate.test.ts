@@ -43,4 +43,20 @@ describe('evaluate', () => {
       value: 7,
     });
   });
+  it('evaluates string', () => {
+    const input = '"Hello";';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({
+      type: 'String',
+      value: 'Hello',
+    });
+  });
+  it('evaluates string concat', () => {
+    const input = '"Hello " + "World";';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({
+      type: 'String',
+      value: 'Hello World',
+    });
+  });
 });

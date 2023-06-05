@@ -1,5 +1,4 @@
 import { assert } from '../utils';
-import { lex } from './lexer';
 import {
   AstNodeType,
   BlockStatement,
@@ -19,10 +18,11 @@ import {
   ReturnStatement,
   Statement,
   StatementType,
+  StringLiteralExpression,
 } from './model/ast';
 import { ParseInfixFnMap, ParsePrefixFnMap } from './model/parser-types';
 import { IdentifierToken, Token, TokenType } from './model/token';
-import { isIdentifierToken, isInfixToken, isIntegerToken, isPrefixToken } from './model/token-guards';
+import { isIdentifierToken, isInfixToken, isIntegerToken, isPrefixToken, isStringToken } from './model/token-guards';
 
 enum Precedence {
   Lowest = 0,
@@ -43,7 +43,7 @@ const precedences: Partial<Record<TokenType, Precedence | undefined>> = {
   [TokenType.Minus]: Precedence.Sum,
   [TokenType.Slash]: Precedence.Product,
   [TokenType.Asterisk]: Precedence.Product,
-  [TokenType.LeftParenthesis]: Precedence.Call
+  [TokenType.LeftParenthesis]: Precedence.Call,
 };
 
 class Parser {
@@ -53,6 +53,7 @@ class Parser {
   private prefixParseFns: ParsePrefixFnMap = {
     [TokenType.Identifier]: this.parseIdentifier.bind(this),
     [TokenType.Integer]: this.parseInteger.bind(this),
+    [TokenType.String]: this.parseString.bind(this),
     [TokenType.Bang]: this.parsePrefixExpression.bind(this),
     [TokenType.Minus]: this.parsePrefixExpression.bind(this),
     [TokenType.True]: this.parseBoolean.bind(this),
@@ -193,6 +194,15 @@ class Parser {
       astType: AstNodeType.Expression,
       expressionType: ExpressionType.IntegerLiteral,
       value: num,
+    };
+  }
+
+  private parseString(): StringLiteralExpression {
+    assert(isStringToken(this.currentToken), 'invalid token', { token: this.currentToken });
+    return {
+      astType: AstNodeType.Expression,
+      expressionType: ExpressionType.StringLiteral,
+      value: this.currentToken.literal,
     };
   }
 

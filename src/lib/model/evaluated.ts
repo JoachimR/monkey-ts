@@ -1,5 +1,4 @@
 import { BlockStatement, IdentifierExpression } from './ast';
-import { astNodeToString } from './ast-node-to-string';
 import { Environment } from './environment';
 
 export enum EvaluatedType {

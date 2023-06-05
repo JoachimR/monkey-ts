@@ -1,8 +1,10 @@
-import { IdentifierToken, InfixToken, IntegerToken, PrefixToken, Token, TokenType } from './token';
+import { IdentifierToken, InfixToken, IntegerToken, PrefixToken, StringToken, Token, TokenType } from './token';
 
 export const isIdentifierToken = (token: Token): token is IdentifierToken => token.type === TokenType.Identifier;
 
 export const isIntegerToken = (token: Token): token is IntegerToken => token.type === TokenType.Integer;
+
+export const isStringToken = (token: Token): token is StringToken => token.type === TokenType.String;
 
 export const isPrefixToken = (token: Token): token is PrefixToken => {
   return token.type === TokenType.Bang || token.type === TokenType.Minus;

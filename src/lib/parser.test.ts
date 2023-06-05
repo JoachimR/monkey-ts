@@ -1,6 +1,5 @@
 import { lex } from './lexer';
 import { parse } from './parser';
-import { evaluate } from './evaluate';
 
 describe('parser', () => {
   test('let statements', () => {
@@ -228,7 +227,7 @@ describe('parser', () => {
   it('parses function calls', () => {
     const input = 'let identity = fn(x) { x; }; identity(5);';
     const result = parse(lex(input));
-    expect(result).toMatchInlineSnapshot({
+    expect(result).toEqual({
       astType: 'Program',
       body: [
         {
@@ -285,6 +284,33 @@ describe('parser', () => {
               value: 'identity',
             },
           },
+        },
+      ],
+    });
+  });
+  it('parses strings', () => {
+    const input = '"foobar" "foo bar"';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'StringLiteral',
+            value: 'foobar',
+          },
+          statementType: 'Expression',
+        },
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'StringLiteral',
+            value: 'foo bar',
+          },
+          statementType: 'Expression',
         },
       ],
     });

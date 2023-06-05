@@ -1,10 +1,13 @@
 import { TokenWithLiterals, TokenType } from './model/token';
 import { Token } from './model/token';
 
+const eof = '\0';
+
 const isNumber = (char: string) => /^[0-9]$/.test(char);
 const isLetter = (char: string) => /^[a-zA-Z]$/.test(char);
 const isWhitespace = (char: string) => /^\s$/.test(char);
-const eof = '\0';
+const isQuote = (char: string) => char === '"';
+const isEof = (char: string) => char === eof;
 
 const findKeywordToken = (string: string): Exclude<Token, TokenWithLiterals> | undefined => {
   switch (string) {
@@ -71,6 +74,10 @@ class Lexer {
         } else {
           token = { type: TokenType.Bang, operator: '!' };
         }
+        break;
+      }
+      case '"': {
+        token = { type: TokenType.String, literal: this.readString() };
         break;
       }
       case ';': {
@@ -197,6 +204,15 @@ class Lexer {
     while (isWhitespace(this.currentChar)) {
       this.readChar();
     }
+  }
+
+  private readString(): string {
+    const position = this.position + 1;
+    this.readChar();
+    while (!isQuote(this.currentChar) && !isEof(this.currentChar)) {
+      this.readChar();
+    }
+    return this.input.slice(position, this.position);
   }
 }
 

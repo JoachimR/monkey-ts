@@ -153,4 +153,20 @@ describe('lexer', () => {
       },
     ]);
   });
+
+  it('string tokens', () => {
+    expect(actual('"foobar" "foo bar"')).toEqual([
+      {
+        literal: 'foobar',
+        type: 'String',
+      },
+      {
+        literal: 'foo bar',
+        type: 'String',
+      },
+      {
+        type: 'Eof',
+      },
+    ]);
+  });
 });

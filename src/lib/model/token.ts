@@ -11,6 +11,7 @@ export const SlashOperator = '/';
 export enum TokenType {
   Identifier = 'Identifier',
   Integer = 'Integer',
+  String = 'String',
   Illegal = 'Illegal',
   Eof = 'Eof',
   Assign = 'Assign',
@@ -43,6 +44,10 @@ export type IdentifierToken = {
 };
 export type IntegerToken = {
   type: TokenType.Integer;
+  literal: string;
+};
+export type StringToken = {
+  type: TokenType.String;
   literal: string;
 };
 export type IllegalToken = {
@@ -130,7 +135,7 @@ export type NotEqualsToken = {
   operator: typeof NotEqualsOperator;
 };
 
-export type TokenWithLiterals = IdentifierToken | IntegerToken;
+export type TokenWithLiterals = IdentifierToken | IntegerToken | StringToken;
 export type TokenWithoutLiterals =
   | IllegalToken
   | EofToken

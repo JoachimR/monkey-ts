@@ -25,6 +25,7 @@ import {
   EvaluatedToBoolean,
   EvaluatedToFunction,
   EvaluatedToInteger,
+  EvaluatedToString,
   EvaluatedType,
 } from './model/evaluated';
 import {
@@ -145,7 +146,10 @@ function evaluateCallExpression(node: CallExpression, env: Environment): Evaluat
   return result;
 }
 
-function evaluateInfixExpression(node: InfixExpression, env: Environment): EvaluatedToBoolean | EvaluatedToInteger {
+function evaluateInfixExpression(
+  node: InfixExpression,
+  env: Environment
+): EvaluatedToBoolean | EvaluatedToInteger | EvaluatedToString {
   switch (node.operator) {
     case EqualsOperator:
       return {
@@ -167,11 +171,10 @@ function evaluateInfixExpression(node: InfixExpression, env: Environment): Evalu
         type: EvaluatedType.Boolean,
         value: lessThan(node.left, node.right, env),
       };
-    case PlusOperator:
-      return {
-        type: EvaluatedType.Integer,
-        value: plus(node.left, node.right, env),
-      };
+    case PlusOperator: {
+      const value = plus(node.left, node.right, env);
+      return typeof value === 'number' ? { type: EvaluatedType.Integer, value } : { type: EvaluatedType.String, value };
+    }
     case MinusOperator:
       return {
         type: EvaluatedType.Integer,
@@ -305,8 +308,17 @@ function lessThan(left: Expression, right: Expression, env: Environment): boolea
   return integerOperation(left, right, env, (a, b) => a < b);
 }
 
-function plus(left: Expression, right: Expression, env: Environment): number {
-  return integerOperation(left, right, env, (a, b) => a + b);
+function plus(left: Expression, right: Expression, env: Environment): string | number {
+  const a = evaluateExpression(left, env);
+  if (a.type === EvaluatedType.String) {
+    const b = evaluateExpression(right, env);
+    assert(b.type === EvaluatedType.String, 'invalid argument for string infix operation', { right: b });
+    return a.value + b.value;
+  }
+  assert(a.type === EvaluatedType.Integer, 'invalid argument for integer infix operation', { left: a });
+  const b = evaluateExpression(right, env);
+  assert(b.type === EvaluatedType.Integer, 'invalid argument for integer infix operation', { right: b });
+  return a.value + b.value;
 }
 
 function minus(left: Expression, right: Expression, env: Environment): number {
