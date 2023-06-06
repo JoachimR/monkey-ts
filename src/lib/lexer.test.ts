@@ -172,4 +172,21 @@ describe('lexer', () => {
       { type: 'Eof' },
     ]);
   });
+  it('empty objects', () => {
+    expect(actual('{}')).toEqual([{ type: 'LeftBrace' }, { type: 'RightBrace' }, { type: 'Eof' }]);
+  });
+  it('objects', () => {
+    expect(actual('{a:1,b:2}')).toEqual([
+      { type: 'LeftBrace' },
+      { literal: 'a', type: 'Identifier' },
+      { type: 'Colon' },
+      { literal: '1', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: 'b', type: 'Identifier' },
+      { type: 'Colon' },
+      { literal: '2', type: 'Integer' },
+      { type: 'RightBrace' },
+      { type: 'Eof' },
+    ]);
+  });
 });

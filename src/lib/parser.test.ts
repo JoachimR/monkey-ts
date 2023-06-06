@@ -283,87 +283,79 @@ describe('parser', () => {
   it('parses array indexing', () => {
     const input = '[1, 2+3, 99][2];';
     const result = parse(lex(input));
-    expect(result).toMatchInlineSnapshot(
-      {
-        astType: 'Program',
-        body: [
-          {
-            astType: 'Statement',
-            statementType: 'Expression',
-            expression: {
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'IndexExpression',
+            left: {
               astType: 'Expression',
-              expressionType: 'IndexExpression',
-              left: {
-                astType: 'Expression',
-                expressionType: 'ArrayLiteral',
-                elements: [
-                  { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
-                  {
-                    astType: 'Expression',
-                    expressionType: 'InfixExpression',
-                    left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
-                    operator: '+',
-                    right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
-                  },
-                  { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
-                ],
-              },
-              index: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+              expressionType: 'ArrayLiteral',
+              elements: [
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
+                {
+                  astType: 'Expression',
+                  expressionType: 'InfixExpression',
+                  left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+                  operator: '+',
+                  right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
+                },
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
+              ],
             },
+            index: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
           },
-        ],
-      },
-      `
-      {
-        "astType": "Program",
-        "body": [
-          {
-            "astType": "Statement",
-            "expression": {
-              "astType": "Expression",
-              "expressionType": "IndexExpression",
-              "index": {
-                "astType": "Expression",
-                "expressionType": "IntegerLiteral",
-                "value": 2,
-              },
-              "left": {
-                "astType": "Expression",
-                "elements": [
-                  {
-                    "astType": "Expression",
-                    "expressionType": "IntegerLiteral",
-                    "value": 1,
-                  },
-                  {
-                    "astType": "Expression",
-                    "expressionType": "InfixExpression",
-                    "left": {
-                      "astType": "Expression",
-                      "expressionType": "IntegerLiteral",
-                      "value": 2,
-                    },
-                    "operator": "+",
-                    "right": {
-                      "astType": "Expression",
-                      "expressionType": "IntegerLiteral",
-                      "value": 3,
-                    },
-                  },
-                  {
-                    "astType": "Expression",
-                    "expressionType": "IntegerLiteral",
-                    "value": 99,
-                  },
-                ],
-                "expressionType": "ArrayLiteral",
-              },
-            },
-            "statementType": "Expression",
+        },
+      ],
+    });
+  });
+  it('parses empty objects', () => {
+    const input = '{}';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'ObjectLiteral',
+            pairs: [],
           },
-        ],
-      }
-    `
-    );
+        },
+      ],
+    });
+  });
+  it('parses objects', () => {
+    const input = '{1: 2, "foo": "bar"}';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          statementType: 'Expression',
+          expression: {
+            astType: 'Expression',
+            expressionType: 'ObjectLiteral',
+            pairs: [
+              [
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+              ],
+              [
+                { astType: 'Expression', expressionType: 'StringLiteral', value: 'foo' },
+                { astType: 'Expression', expressionType: 'StringLiteral', value: 'bar' },
+              ],
+            ],
+          },
+        },
+      ],
+    });
   });
 });

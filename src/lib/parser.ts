@@ -9,6 +9,7 @@ import {
   ExpressionStatement,
   ExpressionType,
   FunctionLiteralExpression,
+  ObjectLiteralExpression,
   IdentifierExpression,
   IfExpression,
   IndexExpression,
@@ -66,6 +67,7 @@ class Parser {
     [TokenType.If]: this.parseIfExpression.bind(this),
     [TokenType.Function]: this.parseFunctionLiteral.bind(this),
     [TokenType.LeftBracket]: this.parseArrayLiteral.bind(this),
+    [TokenType.LeftBrace]: this.parseObjectLiteral.bind(this),
   };
 
   private infixParseFns: ParseInfixFnMap = {
@@ -314,6 +316,29 @@ class Parser {
       astType: AstNodeType.Expression,
       expressionType: ExpressionType.ArrayLiteral,
       elements: this.parseExpressionList(TokenType.RightBracket),
+    };
+  }
+
+  private parseObjectLiteral(): ObjectLiteralExpression {
+    assert(this.currentToken.type === TokenType.LeftBrace, 'invalid token', { token: this.currentToken });
+    const pairs: ObjectLiteralExpression['pairs'] = [];
+    while (this.peekToken?.type !== TokenType.RightBrace) {
+      this.nextToken();
+      const key = this.parseExpression(Precedence.Lowest);
+      this.nextTokenExpecting(TokenType.Colon);
+      this.nextToken();
+      const value = this.parseExpression(Precedence.Lowest);
+      pairs.push([key, value]);
+      // @ts-expect-error [TS2367] peekToken can be mutated at this point
+      if (this.peekToken?.type !== TokenType.RightBrace) {
+        this.nextTokenExpecting(TokenType.Comma);
+      }
+    }
+    this.nextTokenExpecting(TokenType.RightBrace);
+    return {
+      astType: AstNodeType.Expression,
+      expressionType: ExpressionType.ObjectLiteral,
+      pairs,
     };
   }
 

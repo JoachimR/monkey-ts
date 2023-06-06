@@ -144,6 +144,10 @@ class Lexer {
         token = { type: TokenType.NotEquals, operator: '!=' };
         break;
       }
+      case ':': {
+        token = { type: TokenType.Colon };
+        break;
+      }
       case eof: {
         this.eofReached = true;
         token = { type: TokenType.Eof };

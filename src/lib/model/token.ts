@@ -39,6 +39,7 @@ export enum TokenType {
   False = 'False',
   Equals = 'Equals',
   NotEquals = 'NotEquals',
+  Colon = 'Colon',
 }
 export type IdentifierToken = {
   type: TokenType.Identifier;
@@ -134,6 +135,9 @@ export type TrueToken = {
 export type FalseToken = {
   type: TokenType.False;
 };
+export type ColonToken = {
+  type: TokenType.Colon;
+};
 export type EqualsToken = {
   type: TokenType.Equals;
   operator: typeof EqualsOperator;
@@ -171,7 +175,8 @@ export type TokenWithoutLiterals =
   | TrueToken
   | FalseToken
   | EqualsToken
-  | NotEqualsToken;
+  | NotEqualsToken
+  | ColonToken;
 
 export type Token = TokenWithLiterals | TokenWithoutLiterals;
 

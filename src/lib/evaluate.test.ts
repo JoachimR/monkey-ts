@@ -154,4 +154,82 @@ describe('evaluate', () => {
       ],
     });
   });
+  it('evaluates empty objects', () => {
+    const input = 'let x = {}; return x';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({
+      type: 'Object',
+      pairs: {},
+    });
+  });
+  it('evaluates objects', () => {
+    const input = 'let x = { "a": 1, "b": 2 }; return x';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({
+      type: 'Object',
+      pairs: {
+        '97': { key: { type: 'String', value: 'a' }, value: { type: 'Integer', value: 1 } },
+        '98': { key: { type: 'String', value: 'b' }, value: { type: 'Integer', value: 2 } },
+      },
+    });
+  });
+  describe('complex objects', () => {
+    const declaration =
+      'let a = "hmmm"; let b = 1+2; let x = { a: true, b: 2, false: 3, 4: "first value" , "hello": 12, 4: "overwritten value" };';
+
+    it('evaluates correctly', () => {
+      const input = declaration + ' ' + 'return x';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'Object',
+        pairs: {
+          '3206501': { key: { type: 'String', value: 'hmmm' }, value: { type: 'Boolean', value: true } },
+          '3': { key: { type: 'Integer', value: 3 }, value: { type: 'Integer', value: 2 } },
+          '0': { key: { type: 'Boolean', value: false }, value: { type: 'Integer', value: 3 } },
+          '4': { key: { type: 'Integer', value: 4 }, value: { type: 'String', value: 'overwritten value' } },
+          '99162322': { key: { type: 'String', value: 'hello' }, value: { type: 'Integer', value: 12 } },
+        },
+      });
+    });
+    it('evaluates string variable access correctly', () => {
+      const input = declaration + ' ' + 'return x[a]';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'Boolean',
+        value: true,
+      });
+    });
+    it('evaluates integer variable access correctly', () => {
+      const input = declaration + ' ' + 'return x[b]';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'Integer',
+        value: 2,
+      });
+    });
+    it('evaluates boolean access correctly', () => {
+      const input = declaration + ' ' + 'return x[false]';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'Integer',
+        value: 3,
+      });
+    });
+    it('evaluates string access correctly', () => {
+      const input = declaration + ' ' + 'return x[4]';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'String',
+        value: 'overwritten value',
+      });
+    });
+    it('evaluates integer key access correctly', () => {
+      const input = declaration + ' ' + 'return x["hello"]';
+      const actual = evaluate(parse(lex(input)));
+      expect(actual).toEqual({
+        type: 'Integer',
+        value: 12,
+      });
+    });
+  });
 });

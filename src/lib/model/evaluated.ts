@@ -10,6 +10,7 @@ export enum EvaluatedType {
   Function = 'Function',
   BuiltIn = 'BuiltIn',
   Array = 'Array',
+  Object = 'Object',
 }
 
 export type EvaluatedToInteger = {
@@ -55,6 +56,16 @@ export type EvaluatedToArray = {
   elements: EvaluatedTo[];
 };
 
+export type HashKey = number;
+export type EvaluatedToObjectEntry = {
+  key: EvaluatedTo;
+  value: EvaluatedTo;
+};
+export type EvaluatedToObject = {
+  type: EvaluatedType.Object;
+  pairs: Record<HashKey, EvaluatedToObjectEntry>;
+};
+
 export type EvaluatedTo =
   | EvaluatedToInteger
   | EvaluatedToString
@@ -63,4 +74,5 @@ export type EvaluatedTo =
   | EvaluatedToReturnValue
   | EvaluatedToFunction
   | EvaluatedToBuiltIn
-  | EvaluatedToArray;
+  | EvaluatedToArray
+  | EvaluatedToObject;

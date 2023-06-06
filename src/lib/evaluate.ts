@@ -14,6 +14,7 @@ import {
   InfixExpression,
   IntegerLiteralExpression,
   LetStatement,
+  ObjectLiteralExpression,
   PrefixExpression,
   Program,
   ReturnStatement,
@@ -21,6 +22,7 @@ import {
   StatementType,
   StringLiteralExpression,
 } from './model/ast';
+import { createHashKey } from './model/create-hash-key';
 import { Environment } from './model/environment';
 import {
   EvaluatedTo,
@@ -28,6 +30,7 @@ import {
   EvaluatedToBoolean,
   EvaluatedToFunction,
   EvaluatedToInteger,
+  EvaluatedToObject,
   EvaluatedToString,
   EvaluatedType,
 } from './model/evaluated';
@@ -97,6 +100,8 @@ function evaluateExpression(node: Expression, env: Environment): EvaluatedTo {
       return evaluateIfExpression(node, env);
     case ExpressionType.IndexExpression:
       return evaluateIndexExpression(node, env);
+    case ExpressionType.ObjectLiteral:
+      return evaluateObjectLiteralExpression(node, env);
     default:
       return checkExhaustive(node);
   }
@@ -261,20 +266,52 @@ function evaluateArrayLiteralExpression(node: ArrayLiteralExpression, env: Envir
   };
 }
 
+function evaluateObjectLiteralExpression(node: ObjectLiteralExpression, env: Environment): EvaluatedToObject {
+  const pairs: EvaluatedToObject['pairs'] = {};
+  for (const pair of node.pairs) {
+    const key = evaluateExpression(pair[0], env);
+    const hashKey = createHashKey(key);
+    const value = evaluateExpression(pair[1], env);
+    pairs[hashKey] = { key, value };
+  }
+  return {
+    type: EvaluatedType.Object,
+    pairs,
+  };
+}
+
 function evaluateIndexExpression(node: IndexExpression, env: Environment): EvaluatedTo {
   const left = evaluateExpression(node.left, env);
   const index = evaluateExpression(node.index, env);
-  assert(left.type === EvaluatedType.Array && index.type === EvaluatedType.Integer, 'not supported for indexing', {
-    left,
-    index,
-  });
-  return evalArrayIndexAccess(left, index);
+  if (left.type === EvaluatedType.Array) {
+    assert(index.type === EvaluatedType.Integer, 'not supported for indexing', { left, index });
+    return evalArrayIndexAccess(left, index);
+  }
+  assert(left.type === EvaluatedType.Object, 'not supported for indexing', { left });
+  assert(
+    index.type === EvaluatedType.Integer || index.type === EvaluatedType.String || index.type === EvaluatedType.Boolean,
+    'not supported for indexing',
+    { left, index }
+  );
+  return evalObjectIndexAccess(left, index);
 }
 
 function evalArrayIndexAccess(node: EvaluatedToArray, index: EvaluatedToInteger): EvaluatedTo {
   const idx = index.value;
   assert(idx > -1 && idx < node.elements.length, 'invalid index', { node, index });
   return node.elements[idx];
+}
+
+function evalObjectIndexAccess(
+  node: EvaluatedToObject,
+  index: EvaluatedToInteger | EvaluatedToString | EvaluatedToBoolean
+): EvaluatedTo {
+  const idx = createHashKey(index);
+  const val = node.pairs[idx];
+  if (!val) {
+    return { type: EvaluatedType.Null };
+  }
+  return val.value;
 }
 
 function evaluateBangOperatorExpression(right: EvaluatedTo): EvaluatedToBoolean {

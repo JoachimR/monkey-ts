@@ -46,7 +46,7 @@ export enum ExpressionType {
   StringLiteral = 'StringLiteral',
   ArrayLiteral = 'ArrayLiteral',
   IndexExpression = 'IndexExpression',
-  HashLiteral = 'HashLiteral',
+  ObjectLiteral = 'ObjectLiteral',
 }
 
 type ExpressionBase = {
@@ -70,6 +70,11 @@ export type StringLiteralExpression = ExpressionBase & {
 export type ArrayLiteralExpression = ExpressionBase & {
   expressionType: ExpressionType.ArrayLiteral;
   elements: Expression[];
+};
+
+export type ObjectLiteralExpression = ExpressionBase & {
+  expressionType: ExpressionType.ObjectLiteral;
+  pairs: [Expression, Expression][];
 };
 
 export type IndexExpression = ExpressionBase & {
@@ -120,6 +125,7 @@ export type Expression =
   | IntegerLiteralExpression
   | StringLiteralExpression
   | ArrayLiteralExpression
+  | ObjectLiteralExpression
   | BooleanLiteralExpression
   | FunctionLiteralExpression
   | PrefixExpression
