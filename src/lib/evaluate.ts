@@ -10,6 +10,7 @@ import {
   FunctionLiteralExpression,
   IdentifierExpression,
   IfExpression,
+  IndexExpression,
   InfixExpression,
   IntegerLiteralExpression,
   LetStatement,
@@ -23,8 +24,8 @@ import {
 import { Environment } from './model/environment';
 import {
   EvaluatedTo,
+  EvaluatedToArray,
   EvaluatedToBoolean,
-  EvaluatedToBuiltIn,
   EvaluatedToFunction,
   EvaluatedToInteger,
   EvaluatedToString,
@@ -94,6 +95,8 @@ function evaluateExpression(node: Expression, env: Environment): EvaluatedTo {
       return evaluateArrayLiteralExpression(node, env);
     case ExpressionType.IfExpression:
       return evaluateIfExpression(node, env);
+    case ExpressionType.IndexExpression:
+      return evaluateIndexExpression(node, env);
     default:
       return checkExhaustive(node);
   }
@@ -256,6 +259,22 @@ function evaluateArrayLiteralExpression(node: ArrayLiteralExpression, env: Envir
     type: EvaluatedType.Array,
     elements: node.elements.map((element) => evaluateExpression(element, env)),
   };
+}
+
+function evaluateIndexExpression(node: IndexExpression, env: Environment): EvaluatedTo {
+  const left = evaluateExpression(node.left, env);
+  const index = evaluateExpression(node.index, env);
+  assert(left.type === EvaluatedType.Array && index.type === EvaluatedType.Integer, 'not supported for indexing', {
+    left,
+    index,
+  });
+  return evalArrayIndexAccess(left, index);
+}
+
+function evalArrayIndexAccess(node: EvaluatedToArray, index: EvaluatedToInteger): EvaluatedTo {
+  const idx = index.value;
+  assert(idx > -1 && idx < node.elements.length, 'invalid index', { node, index });
+  return node.elements[idx];
 }
 
 function evaluateBangOperatorExpression(right: EvaluatedTo): EvaluatedToBoolean {

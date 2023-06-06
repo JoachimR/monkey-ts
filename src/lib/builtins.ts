@@ -20,4 +20,57 @@ export const builtins: Record<string, EvaluatedToBuiltIn> = {
       };
     },
   },
+  first: {
+    type: EvaluatedType.BuiltIn,
+    fn: (...args: EvaluatedTo[]) => {
+      assert(args.length === 1, 'wrong number of arguments', { args });
+      const arg = args[0];
+      assert(arg.type === EvaluatedType.Array, 'invalid argument', { args });
+      if (arg.elements.length === 0) {
+        return { type: EvaluatedType.Null };
+      }
+      return arg.elements[0];
+    },
+  },
+  last: {
+    type: EvaluatedType.BuiltIn,
+    fn: (...args: EvaluatedTo[]) => {
+      assert(args.length === 1, 'wrong number of arguments', { args });
+      const arg = args[0];
+      assert(arg.type === EvaluatedType.Array, 'invalid argument', { args });
+      if (arg.elements.length === 0) {
+        return { type: EvaluatedType.Null };
+      }
+      const last = arg.elements.at(-1);
+      assert(last, 'invalid argument', { args });
+      return last;
+    },
+  },
+  rest: {
+    type: EvaluatedType.BuiltIn,
+    fn: (...args: EvaluatedTo[]) => {
+      assert(args.length === 1, 'wrong number of arguments', { args });
+      const arg = args[0];
+      assert(arg.type === EvaluatedType.Array, 'invalid argument', { args });
+      if (arg.elements.length === 0) {
+        return { type: EvaluatedType.Null };
+      }
+      return {
+        type: EvaluatedType.Array,
+        elements: arg.elements.slice(1),
+      };
+    },
+  },
+  push: {
+    type: EvaluatedType.BuiltIn,
+    fn: (...args: EvaluatedTo[]) => {
+      assert(args.length === 2, 'wrong number of arguments', { args });
+      const arg = args[0];
+      assert(arg.type === EvaluatedType.Array, 'invalid argument', { args });
+      return {
+        type: EvaluatedType.Array,
+        elements: [...arg.elements, args[1]],
+      };
+    },
+  },
 };

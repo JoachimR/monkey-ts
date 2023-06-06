@@ -66,9 +66,16 @@ export type StringLiteralExpression = ExpressionBase & {
   expressionType: ExpressionType.StringLiteral;
   value: string;
 };
+
 export type ArrayLiteralExpression = ExpressionBase & {
   expressionType: ExpressionType.ArrayLiteral;
   elements: Expression[];
+};
+
+export type IndexExpression = ExpressionBase & {
+  expressionType: ExpressionType.IndexExpression;
+  left: Expression;
+  index: Expression;
 };
 
 export type BooleanLiteralExpression = ExpressionBase & {
@@ -117,6 +124,7 @@ export type Expression =
   | FunctionLiteralExpression
   | PrefixExpression
   | InfixExpression
+  | IndexExpression
   | IfExpression
   | CallExpression;
 

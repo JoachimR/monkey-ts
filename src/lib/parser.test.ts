@@ -15,45 +15,21 @@ describe('parser', () => {
       body: [
         {
           astType: 'Statement',
-          name: {
-            astType: 'Expression',
-            expressionType: 'Identifier',
-            value: 'x',
-          },
+          name: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
           statementType: 'Let',
-          value: {
-            astType: 'Expression',
-            expressionType: 'IntegerLiteral',
-            value: 5,
-          },
+          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
         },
         {
           astType: 'Statement',
-          name: {
-            astType: 'Expression',
-            expressionType: 'Identifier',
-            value: 'y',
-          },
+          name: { astType: 'Expression', expressionType: 'Identifier', value: 'y' },
           statementType: 'Let',
-          value: {
-            astType: 'Expression',
-            expressionType: 'IntegerLiteral',
-            value: 10,
-          },
+          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 10 },
         },
         {
           astType: 'Statement',
-          name: {
-            astType: 'Expression',
-            expressionType: 'Identifier',
-            value: 'foobar',
-          },
+          name: { astType: 'Expression', expressionType: 'Identifier', value: 'foobar' },
           statementType: 'Let',
-          value: {
-            astType: 'Expression',
-            expressionType: 'IntegerLiteral',
-            value: 123,
-          },
+          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 123 },
         },
       ],
     });
@@ -75,11 +51,7 @@ describe('parser', () => {
             astType: 'Expression',
             expressionType: 'PrefixExpression',
             operator: '!',
-            right: {
-              astType: 'Expression',
-              expressionType: 'IntegerLiteral',
-              value: 5,
-            },
+            right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
           },
           statementType: 'Expression',
         },
@@ -89,11 +61,7 @@ describe('parser', () => {
             astType: 'Expression',
             expressionType: 'PrefixExpression',
             operator: '-',
-            right: {
-              astType: 'Expression',
-              expressionType: 'IntegerLiteral',
-              value: 15,
-            },
+            right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 15 },
           },
           statementType: 'Expression',
         },
@@ -103,11 +71,7 @@ describe('parser', () => {
             astType: 'Expression',
             expressionType: 'PrefixExpression',
             operator: '!',
-            right: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'foobar',
-            },
+            right: { astType: 'Expression', expressionType: 'Identifier', value: 'foobar' },
           },
           statementType: 'Expression',
         },
@@ -117,11 +81,7 @@ describe('parser', () => {
             astType: 'Expression',
             expressionType: 'PrefixExpression',
             operator: '!',
-            right: {
-              astType: 'Expression',
-              expressionType: 'BooleanLiteral',
-              value: true,
-            },
+            right: { astType: 'Expression', expressionType: 'BooleanLiteral', value: true },
           },
           statementType: 'Expression',
         },
@@ -131,11 +91,7 @@ describe('parser', () => {
             astType: 'Expression',
             expressionType: 'PrefixExpression',
             operator: '!',
-            right: {
-              astType: 'Expression',
-              expressionType: 'BooleanLiteral',
-              value: false,
-            },
+            right: { astType: 'Expression', expressionType: 'BooleanLiteral', value: false },
           },
           statementType: 'Expression',
         },
@@ -154,22 +110,10 @@ describe('parser', () => {
           expression: {
             astType: 'Expression',
             expressionType: 'CallExpression',
-            func: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'add',
-            },
+            func: { astType: 'Expression', expressionType: 'Identifier', value: 'add' },
             args: [
-              {
-                astType: 'Expression',
-                expressionType: 'IntegerLiteral',
-                value: 5,
-              },
-              {
-                astType: 'Expression',
-                expressionType: 'IntegerLiteral',
-                value: 3,
-              },
+              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
+              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
             ],
           },
         },
@@ -191,17 +135,9 @@ describe('parser', () => {
             condition: {
               astType: 'Expression',
               expressionType: 'InfixExpression',
-              left: {
-                astType: 'Expression',
-                expressionType: 'Identifier',
-                value: 'x',
-              },
+              left: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
               operator: '<',
-              right: {
-                astType: 'Expression',
-                expressionType: 'Identifier',
-                value: 'y',
-              },
+              right: { astType: 'Expression', expressionType: 'Identifier', value: 'y' },
             },
             consequence: {
               astType: 'Statement',
@@ -210,11 +146,7 @@ describe('parser', () => {
                 {
                   astType: 'Statement',
                   statementType: 'Expression',
-                  expression: {
-                    astType: 'Expression',
-                    expressionType: 'Identifier',
-                    value: 'x',
-                  },
+                  expression: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
                 },
               ],
             },
@@ -233,21 +165,11 @@ describe('parser', () => {
         {
           astType: 'Statement',
           statementType: 'Let',
-          name: {
-            astType: 'Expression',
-            expressionType: 'Identifier',
-            value: 'identity',
-          },
+          name: { astType: 'Expression', expressionType: 'Identifier', value: 'identity' },
           value: {
             astType: 'Expression',
             expressionType: 'FunctionLiteral',
-            parameters: [
-              {
-                astType: 'Expression',
-                expressionType: 'Identifier',
-                value: 'x',
-              },
-            ],
+            parameters: [{ astType: 'Expression', expressionType: 'Identifier', value: 'x' }],
             body: {
               astType: 'Statement',
               statementType: 'Block',
@@ -255,11 +177,7 @@ describe('parser', () => {
                 {
                   astType: 'Statement',
                   statementType: 'Expression',
-                  expression: {
-                    astType: 'Expression',
-                    expressionType: 'Identifier',
-                    value: 'x',
-                  },
+                  expression: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
                 },
               ],
             },
@@ -271,18 +189,8 @@ describe('parser', () => {
           expression: {
             astType: 'Expression',
             expressionType: 'CallExpression',
-            args: [
-              {
-                astType: 'Expression',
-                expressionType: 'IntegerLiteral',
-                value: 5,
-              },
-            ],
-            func: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'identity',
-            },
+            args: [{ astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 }],
+            func: { astType: 'Expression', expressionType: 'Identifier', value: 'identity' },
           },
         },
       ],
@@ -296,20 +204,12 @@ describe('parser', () => {
       body: [
         {
           astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'StringLiteral',
-            value: 'foobar',
-          },
+          expression: { astType: 'Expression', expressionType: 'StringLiteral', value: 'foobar' },
           statementType: 'Expression',
         },
         {
           astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'StringLiteral',
-            value: 'foo bar',
-          },
+          expression: { astType: 'Expression', expressionType: 'StringLiteral', value: 'foo bar' },
           statementType: 'Expression',
         },
       ],
@@ -327,21 +227,143 @@ describe('parser', () => {
           expression: {
             astType: 'Expression',
             expressionType: 'CallExpression',
-            func: {
-              astType: 'Expression',
-              expressionType: 'Identifier',
-              value: 'len',
-            },
-            args: [
-              {
-                astType: 'Expression',
-                expressionType: 'StringLiteral',
-                value: 'Hello World',
-              },
-            ],
+            func: { astType: 'Expression', expressionType: 'Identifier', value: 'len' },
+            args: [{ astType: 'Expression', expressionType: 'StringLiteral', value: 'Hello World' }],
           },
         },
       ],
     });
+  });
+  it('parses empty arrays', () => {
+    const input = '[];';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            elements: [],
+            expressionType: 'ArrayLiteral',
+          },
+          statementType: 'Expression',
+        },
+      ],
+    });
+  });
+  it('parses filled arrays', () => {
+    const input = '[1, 2+3, 99];';
+    const result = parse(lex(input));
+    expect(result).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            elements: [
+              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
+              {
+                astType: 'Expression',
+                expressionType: 'InfixExpression',
+                left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+                operator: '+',
+                right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
+              },
+              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
+            ],
+            expressionType: 'ArrayLiteral',
+          },
+          statementType: 'Expression',
+        },
+      ],
+    });
+  });
+  it('parses array indexing', () => {
+    const input = '[1, 2+3, 99][2];';
+    const result = parse(lex(input));
+    expect(result).toMatchInlineSnapshot(
+      {
+        astType: 'Program',
+        body: [
+          {
+            astType: 'Statement',
+            statementType: 'Expression',
+            expression: {
+              astType: 'Expression',
+              expressionType: 'IndexExpression',
+              left: {
+                astType: 'Expression',
+                expressionType: 'ArrayLiteral',
+                elements: [
+                  { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
+                  {
+                    astType: 'Expression',
+                    expressionType: 'InfixExpression',
+                    left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+                    operator: '+',
+                    right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
+                  },
+                  { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
+                ],
+              },
+              index: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+            },
+          },
+        ],
+      },
+      `
+      {
+        "astType": "Program",
+        "body": [
+          {
+            "astType": "Statement",
+            "expression": {
+              "astType": "Expression",
+              "expressionType": "IndexExpression",
+              "index": {
+                "astType": "Expression",
+                "expressionType": "IntegerLiteral",
+                "value": 2,
+              },
+              "left": {
+                "astType": "Expression",
+                "elements": [
+                  {
+                    "astType": "Expression",
+                    "expressionType": "IntegerLiteral",
+                    "value": 1,
+                  },
+                  {
+                    "astType": "Expression",
+                    "expressionType": "InfixExpression",
+                    "left": {
+                      "astType": "Expression",
+                      "expressionType": "IntegerLiteral",
+                      "value": 2,
+                    },
+                    "operator": "+",
+                    "right": {
+                      "astType": "Expression",
+                      "expressionType": "IntegerLiteral",
+                      "value": 3,
+                    },
+                  },
+                  {
+                    "astType": "Expression",
+                    "expressionType": "IntegerLiteral",
+                    "value": 99,
+                  },
+                ],
+                "expressionType": "ArrayLiteral",
+              },
+            },
+            "statementType": "Expression",
+          },
+        ],
+      }
+    `
+    );
   });
 });

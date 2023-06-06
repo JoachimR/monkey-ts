@@ -104,6 +104,14 @@ class Lexer {
         token = { type: TokenType.Minus, operator: '-' };
         break;
       }
+      case '[': {
+        token = { type: TokenType.LeftBracket };
+        break;
+      }
+      case ']': {
+        token = { type: TokenType.RightBracket };
+        break;
+      }
       case '{': {
         token = { type: TokenType.LeftBrace };
         break;

@@ -127,46 +127,49 @@ describe('lexer', () => {
 
   it('function call', () => {
     expect(actual('add(5,3)')).toEqual([
-      {
-        literal: 'add',
-        type: 'Identifier',
-      },
-      {
-        type: 'LeftParenthesis',
-      },
-      {
-        literal: '5',
-        type: 'Integer',
-      },
-      {
-        type: 'Comma',
-      },
-      {
-        literal: '3',
-        type: 'Integer',
-      },
-      {
-        type: 'RightParenthesis',
-      },
-      {
-        type: 'Eof',
-      },
+      { literal: 'add', type: 'Identifier' },
+      { type: 'LeftParenthesis' },
+      { literal: '5', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '3', type: 'Integer' },
+      { type: 'RightParenthesis' },
+      { type: 'Eof' },
     ]);
   });
 
   it('string tokens', () => {
     expect(actual('"foobar" "foo bar"')).toEqual([
-      {
-        literal: 'foobar',
-        type: 'String',
-      },
-      {
-        literal: 'foo bar',
-        type: 'String',
-      },
-      {
-        type: 'Eof',
-      },
+      { literal: 'foobar', type: 'String' },
+      { literal: 'foo bar', type: 'String' },
+      { type: 'Eof' },
+    ]);
+  });
+  it('arrays', () => {
+    expect(actual('[]')).toEqual([{ type: 'LeftBracket' }, { type: 'RightBracket' }, { type: 'Eof' }]);
+    expect(actual('[1,3+3, 99]')).toEqual([
+      { type: 'LeftBracket' },
+      { literal: '1', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '3', type: 'Integer' },
+      { operator: '+', type: 'Plus' },
+      { literal: '3', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '99', type: 'Integer' },
+      { type: 'RightBracket' },
+      { type: 'Eof' },
+    ]);
+  });
+  it('array indexing', () => {
+    expect(actual('[a,b][1]')).toEqual([
+      { type: 'LeftBracket' },
+      { literal: 'a', type: 'Identifier' },
+      { type: 'Comma' },
+      { literal: 'b', type: 'Identifier' },
+      { type: 'RightBracket' },
+      { type: 'LeftBracket' },
+      { literal: '1', type: 'Integer' },
+      { type: 'RightBracket' },
+      { type: 'Eof' },
     ]);
   });
 });

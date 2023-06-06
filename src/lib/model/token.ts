@@ -28,6 +28,8 @@ export enum TokenType {
   RightParenthesis = 'RightParenthesis',
   LeftBrace = 'LeftBrace',
   RightBrace = 'RightBrace',
+  LeftBracket = 'LeftBracket',
+  RightBracket = 'RightBracket',
   Function = 'Function',
   Let = 'Let',
   If = 'If',
@@ -105,6 +107,12 @@ export type LeftBraceToken = {
 export type RightBraceToken = {
   type: TokenType.RightBrace;
 };
+export type LeftBracket = {
+  type: TokenType.LeftBracket;
+};
+export type RightBracket = {
+  type: TokenType.RightBracket;
+};
 export type FunctionToken = {
   type: TokenType.Function;
 };
@@ -153,6 +161,8 @@ export type TokenWithoutLiterals =
   | RightParenthesisToken
   | LeftBraceToken
   | RightBraceToken
+  | LeftBracket
+  | RightBracket
   | FunctionToken
   | LetToken
   | IfToken

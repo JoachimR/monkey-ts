@@ -1,5 +1,6 @@
 import { assert } from '../utils';
 import {
+  ArrayLiteralExpression,
   AstNodeType,
   BlockStatement,
   BooleanLiteralExpression,
@@ -10,6 +11,7 @@ import {
   FunctionLiteralExpression,
   IdentifierExpression,
   IfExpression,
+  IndexExpression,
   InfixExpression,
   IntegerLiteralExpression,
   LetStatement,
@@ -32,6 +34,7 @@ enum Precedence {
   Product = 4,
   Prefix = 5,
   Call = 6,
+  Index = 7,
 }
 
 const precedences: Partial<Record<TokenType, Precedence | undefined>> = {
@@ -44,6 +47,7 @@ const precedences: Partial<Record<TokenType, Precedence | undefined>> = {
   [TokenType.Slash]: Precedence.Product,
   [TokenType.Asterisk]: Precedence.Product,
   [TokenType.LeftParenthesis]: Precedence.Call,
+  [TokenType.LeftBracket]: Precedence.Index,
 };
 
 class Parser {
@@ -61,6 +65,7 @@ class Parser {
     [TokenType.LeftParenthesis]: this.parseGroupedExpression.bind(this),
     [TokenType.If]: this.parseIfExpression.bind(this),
     [TokenType.Function]: this.parseFunctionLiteral.bind(this),
+    [TokenType.LeftBracket]: this.parseArrayLiteral.bind(this),
   };
 
   private infixParseFns: ParseInfixFnMap = {
@@ -72,6 +77,7 @@ class Parser {
     [TokenType.NotEquals]: this.parseInfixExpression.bind(this),
     [TokenType.LessThan]: this.parseInfixExpression.bind(this),
     [TokenType.GreaterThan]: this.parseInfixExpression.bind(this),
+    [TokenType.LeftBracket]: this.parseIndexExpression.bind(this),
     [TokenType.LeftParenthesis]: (arg: Expression) => {
       assert(arg.expressionType === ExpressionType.Identifier || arg.expressionType === ExpressionType.FunctionLiteral);
       return this.parseCallExpression(arg);
@@ -302,6 +308,27 @@ class Parser {
     };
   }
 
+  private parseArrayLiteral(): ArrayLiteralExpression {
+    assert(this.currentToken.type === TokenType.LeftBracket, 'invalid token', { token: this.currentToken });
+    return {
+      astType: AstNodeType.Expression,
+      expressionType: ExpressionType.ArrayLiteral,
+      elements: this.parseExpressionList(TokenType.RightBracket),
+    };
+  }
+
+  private parseIndexExpression(left: Expression): IndexExpression {
+    this.nextToken();
+    const index = this.parseExpression(Precedence.Lowest);
+    this.nextTokenExpecting(TokenType.RightBracket);
+    return {
+      astType: AstNodeType.Expression,
+      expressionType: ExpressionType.IndexExpression,
+      left,
+      index,
+    };
+  }
+
   private parseFunctionParameters() {
     if (this.peekToken?.type === TokenType.RightParenthesis) {
       this.nextToken();
@@ -348,17 +375,18 @@ class Parser {
   }
 
   private parseCallExpression(func: IdentifierExpression | FunctionLiteralExpression): CallExpression {
+    assert(this.currentToken.type === TokenType.LeftParenthesis, 'invalid token', { token: this.currentToken });
     return {
       astType: AstNodeType.Expression,
       expressionType: ExpressionType.CallExpression,
       func,
-      args: this.parseCallArguments(),
+      args: this.parseExpressionList(TokenType.RightParenthesis),
     };
   }
 
-  private parseCallArguments(): Expression[] {
-    assert(this.currentToken.type === TokenType.LeftParenthesis, 'invalid token', { token: this.currentToken });
-    if (this.peekToken?.type === TokenType.RightParenthesis) {
+  private parseExpressionList(endTokenType: TokenType): Expression[] {
+    if (this.peekToken?.type === endTokenType) {
+      this.nextToken();
       return [];
     }
     const args: Expression[] = [];
@@ -370,7 +398,7 @@ class Parser {
       this.nextToken();
       args.push(this.parseExpression(Precedence.Lowest));
     }
-    this.nextTokenExpecting(TokenType.RightParenthesis);
+    this.nextTokenExpecting(endTokenType);
     return args;
   }
 
