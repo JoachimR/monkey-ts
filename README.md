@@ -4,4 +4,3 @@ This is a TypeScript implementation of the Monkey programming language, as descr
 
 [Inspired by RonaldDijks TS implementation](https://github.com/RonaldDijks/writing-an-interpreter-in-typescript)
 
-# WORK IN PROGRESS
