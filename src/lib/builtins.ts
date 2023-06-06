@@ -1,5 +1,6 @@
 import { assert } from '../utils';
 import { EvaluatedTo, EvaluatedToBuiltIn, EvaluatedType } from './model/evaluated';
+import { evaluatedToString } from './model/evaluated-to-string';
 
 export const builtins: Record<string, EvaluatedToBuiltIn> = {
   len: {
@@ -71,6 +72,15 @@ export const builtins: Record<string, EvaluatedToBuiltIn> = {
         type: EvaluatedType.Array,
         elements: [...arg.elements, args[1]],
       };
+    },
+  },
+  puts: {
+    type: EvaluatedType.BuiltIn,
+    fn: (...args: EvaluatedTo[]) => {
+      for (const arg of args) {
+        console.log(evaluatedToString(arg));
+      }
+      return { type: EvaluatedType.Null };
     },
   },
 };

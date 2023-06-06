@@ -1,7 +1,6 @@
 import { evaluate } from './evaluate';
 import { lex } from './lexer';
 import { parse } from './parser';
-
 describe('evaluate', () => {
   it('returns last let statement', () => {
     const input = `
@@ -231,5 +230,14 @@ describe('evaluate', () => {
         value: 12,
       });
     });
+  });
+  it('evaluates puts', () => {
+    const spy = jest.spyOn(console, 'log');
+    const input = 'puts("hello", "world", 1+4);';
+    const actual = evaluate(parse(lex(input)));
+    expect(actual).toEqual({ type: 'Null' });
+    expect(spy).toHaveBeenNthCalledWith(1, '"hello"');
+    expect(spy).toHaveBeenNthCalledWith(2, '"world"');
+    expect(spy).toHaveBeenNthCalledWith(3, '5');
   });
 });

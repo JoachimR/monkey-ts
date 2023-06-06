@@ -30,6 +30,8 @@ export function astNodeToString(node: AstNode): string {
           return `${node.value.toString()}`;
         case ExpressionType.ArrayLiteral:
           return node.elements.map(astNodeToString).join(', ');
+        case ExpressionType.ObjectLiteral:
+          return node.pairs.map((pair) => `${astNodeToString(pair[0])}: ${astNodeToString(pair[1])}`).join(', ');
         case ExpressionType.FunctionLiteral:
           return node.parameters.map(astNodeToString).join(', ');
         case ExpressionType.CallExpression:
@@ -44,6 +46,8 @@ export function astNodeToString(node: AstNode): string {
                 node.consequence
               )}}`} else {${astNodeToString(node.alternative)}}`
             : `if (${astNodeToString(node.condition)}) {${astNodeToString(node.consequence)}}`;
+        case ExpressionType.IndexExpression:
+          return `${astNodeToString(node.left)}[${astNodeToString(node.index)}]`;
         default:
           return checkExhaustive(node);
       }
