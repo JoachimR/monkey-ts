@@ -1,7 +1,7 @@
 import readline from 'readline';
 import { evaluate } from '../lib/evaluate';
-import { lex } from '../lib/lexer';
-import { parse } from '../lib/parser';
+import { lex } from '../lib/lex';
+import { parse } from '../lib/parse';
 import { evaluatedToString } from '../lib/model/evaluated-to-string';
 
 export const start = (): void => {

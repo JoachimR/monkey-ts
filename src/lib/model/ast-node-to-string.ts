@@ -1,5 +1,5 @@
 import { checkExhaustive } from '../../utils';
-import { AstNode, AstNodeType, StatementType, ExpressionType } from './ast';
+import { AstNode, AstNodeType, ExpressionType, StatementType } from './ast';
 
 export function astNodeToString(node: AstNode): string {
   switch (node.astType) {

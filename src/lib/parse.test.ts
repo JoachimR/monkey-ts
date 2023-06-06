@@ -1,7 +1,9 @@
-import { lex } from './lexer';
-import { parse } from './parser';
+import { parse } from './parse';
+import { lex } from './lex';
 
-describe('parser', () => {
+describe('parse', () => {
+  const actual = (input: string) => parse(lex(input));
+
   test('let statements', () => {
     const input = `
     let x = 5;
@@ -9,8 +11,7 @@ describe('parser', () => {
     let foobar = 123;
   `;
 
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -42,7 +43,7 @@ describe('parser', () => {
      !true;
      !false;
     `;
-    expect(parse(lex(input))).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -101,7 +102,7 @@ describe('parser', () => {
 
   it('function call', () => {
     const input = 'add(5, 3);';
-    expect(parse(lex(input))).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -123,7 +124,7 @@ describe('parser', () => {
 
   it('infix', () => {
     const input = `if (x < y) { x }`;
-    expect(parse(lex(input))).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -158,8 +159,7 @@ describe('parser', () => {
 
   it('parses function calls', () => {
     const input = 'let identity = fn(x) { x; }; identity(5);';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -198,8 +198,7 @@ describe('parser', () => {
   });
   it('parses strings', () => {
     const input = '"foobar" "foo bar"';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -217,8 +216,7 @@ describe('parser', () => {
   });
   it('parses builtin functions', () => {
     const input = 'len("Hello World");';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -236,8 +234,7 @@ describe('parser', () => {
   });
   it('parses empty arrays', () => {
     const input = '[];';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -254,8 +251,7 @@ describe('parser', () => {
   });
   it('parses filled arrays', () => {
     const input = '[1, 2+3, 99];';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -282,8 +278,7 @@ describe('parser', () => {
   });
   it('parses array indexing', () => {
     const input = '[1, 2+3, 99][2];';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -315,8 +310,7 @@ describe('parser', () => {
   });
   it('parses empty objects', () => {
     const input = '{}';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {
@@ -333,8 +327,7 @@ describe('parser', () => {
   });
   it('parses objects', () => {
     const input = '{1: 2, "foo": "bar"}';
-    const result = parse(lex(input));
-    expect(result).toEqual({
+    expect(actual(input)).toEqual({
       astType: 'Program',
       body: [
         {

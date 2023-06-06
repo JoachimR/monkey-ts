@@ -1,5 +1,4 @@
-import { TokenWithLiterals, TokenType } from './model/token';
-import { Token } from './model/token';
+import { Token, TokenType, TokenWithLiterals } from './model/token';
 
 const eof = '\0';
 

@@ -1,11 +1,11 @@
 import { assert, checkExhaustive } from '../../utils';
 import {
   EvaluatedTo,
-  HashKey,
-  EvaluatedType,
   EvaluatedToBoolean,
   EvaluatedToInteger,
   EvaluatedToString,
+  EvaluatedType,
+  HashKey,
 } from './evaluated';
 
 export function createHashKey(arg: EvaluatedTo): HashKey {
