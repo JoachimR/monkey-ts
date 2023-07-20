@@ -22,7 +22,7 @@ import {
   StringLiteralExpression,
 } from './model/ast';
 import { createHashKey } from './model/create-hash-key';
-import { Environment } from './model/environment';
+import { Environment, createEnvironment, getFromEnvironment, storeInEnvironment } from './model/environment';
 import {
   EvaluatedTo,
   EvaluatedToArray,
@@ -33,7 +33,7 @@ import {
   EvaluatedToObject,
   EvaluatedToString,
   EvaluatedType,
-} from './model/evaluated';
+} from './model/evaluated-to';
 import {
   AsteriskOperator,
   BangOperator,
@@ -46,9 +46,10 @@ import {
   SlashOperator,
 } from './model/token';
 import { evaluatedToString } from './model/evaluated-to-string';
+import { astNodeToString } from './model/ast-node-to-string';
 
 export function evaluate(node: Program): EvaluatedTo {
-  return evaluateProgram(node, new Environment());
+  return evaluateProgram(node, createEnvironment());
 }
 
 function evaluateProgram(node: Program, env: Environment): EvaluatedTo {
@@ -130,7 +131,7 @@ function evaluateStringLiteral(node: StringLiteralExpression): EvaluatedTo {
 }
 
 function evaluateIdentifierExpression(node: IdentifierExpression, env: Environment): EvaluatedTo {
-  const value = env.get(node.value) ?? builtins[node.value];
+  const value = getFromEnvironment(env, node.value) ?? builtins[node.value];
   assert(value !== undefined, 'identifier not found', { node, env });
   return value;
 }
@@ -153,7 +154,7 @@ function evaluateCallExpression(node: CallExpression, env: Environment): Evaluat
   }
 
   assert(expression.type === EvaluatedType.Function, 'not a function', { expression });
-  const extendedEnv = new Environment(expression.environment, {
+  const extendedEnv = createEnvironment(expression.environment, {
     parameters: expression.parameters,
     values: createArgs(),
   });
@@ -249,7 +250,7 @@ function evaluateBlockStatement(node: BlockStatement, env: Environment): Evaluat
 
 function evaluateLetStatement(node: LetStatement, env: Environment): EvaluatedTo {
   const value = evaluateExpression(node.value, env);
-  env.set(node.name.value, value);
+  storeInEnvironment(env, node.name.value, value);
   return value;
 }
 

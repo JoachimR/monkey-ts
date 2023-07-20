@@ -1,5 +1,7 @@
+import { assert } from '../utils';
 import { evaluate } from './evaluate';
 import { lex } from './lex';
+import { evaluatedToString } from './model/evaluated-to-string';
 import { parse } from './parse';
 
 describe('evaluate', () => {
@@ -23,6 +25,37 @@ describe('evaluate', () => {
     expect(actual(input)).toEqual({
       type: 'Boolean',
       value: true,
+    });
+  });
+
+  it('evaluates function definition', () => {
+    const input = 'let identity = fn(x) { x; };';
+    const a = actual(input);
+    expect(a).toEqual({
+      environment: expect.anything(),
+      type: 'Function',
+      body: {
+        astType: 'Statement',
+        statementType: 'Block',
+        statements: [
+          {
+            astType: 'Statement',
+            expression: {
+              astType: 'Expression',
+              expressionType: 'Identifier',
+              value: 'x',
+            },
+            statementType: 'Expression',
+          },
+        ],
+      },
+      parameters: [
+        {
+          astType: 'Expression',
+          expressionType: 'Identifier',
+          value: 'x',
+        },
+      ],
     });
   });
 

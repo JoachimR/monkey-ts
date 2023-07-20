@@ -6,7 +6,7 @@ import {
   EvaluatedToString,
   EvaluatedType,
   HashKey,
-} from './evaluated';
+} from './evaluated-to';
 
 export function createHashKey(arg: EvaluatedTo): HashKey {
   assert(

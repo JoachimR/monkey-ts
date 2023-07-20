@@ -1,31 +1,41 @@
 import { IdentifierExpression } from './ast';
-import { EvaluatedTo } from './evaluated';
+import { EvaluatedTo } from './evaluated-to';
 
-export class Environment {
-  private store: Record<string, EvaluatedTo | undefined>;
-  private outer?: Environment;
+export type Environment = {
+  store: Record<string, EvaluatedTo | undefined>;
+  outer?: Environment;
+};
 
-  public constructor(outer?: Environment, context?: { parameters: IdentifierExpression[]; values: EvaluatedTo[] }) {
-    this.store = {};
-    this.outer = outer;
+export function getFromEnvironment(env: Environment, name: string): EvaluatedTo | undefined {
+  const evaluatedTo = env.store[name];
+  if (evaluatedTo) {
+    return evaluatedTo;
+  }
+  if (env.outer) {
+    return getFromEnvironment(env.outer, name);
+  }
+  return undefined;
+}
 
-    if (context) {
-      for (let i = 0; i < context.parameters.length; i++) {
-        const value = context.values.length > i ? context.values[i] : undefined;
-        this.set(context.parameters[i].value, value);
+export function storeInEnvironment(env: Environment, name: string, value: EvaluatedTo): void {
+  env.store[name] = value;
+}
+
+export const createEnvironment = (
+  outer?: Environment,
+  context?: { parameters: IdentifierExpression[]; values: EvaluatedTo[] }
+): Environment => {
+  const env: Environment = {
+    store: {},
+    outer: outer,
+  };
+  if (context) {
+    for (let i = 0; i < context.parameters.length; i++) {
+      const value = context.values.length > i ? context.values[i] : undefined;
+      if (value) {
+        storeInEnvironment(env, context.parameters[i].value, value);
       }
     }
   }
-
-  public get(name: string): EvaluatedTo | undefined {
-    const v = this.store[name];
-    if (v) {
-      return v;
-    }
-    return this.outer?.get(name);
-  }
-
-  public set(name: string, value: EvaluatedTo | undefined) {
-    this.store[name] = value;
-  }
-}
+  return env;
+};

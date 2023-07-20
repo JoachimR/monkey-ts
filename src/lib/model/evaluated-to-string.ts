@@ -1,6 +1,6 @@
 import { checkExhaustive } from '../../utils';
 import { astNodeToString } from './ast-node-to-string';
-import { EvaluatedTo, EvaluatedType } from './evaluated';
+import { EvaluatedTo, EvaluatedType } from './evaluated-to';
 
 export function evaluatedToString(evaluatedTo: EvaluatedTo): string {
   switch (evaluatedTo.type) {
@@ -21,7 +21,7 @@ export function evaluatedToString(evaluatedTo: EvaluatedTo): string {
     case EvaluatedType.BuiltIn:
       return 'builtin function';
     case EvaluatedType.Array:
-      return `'[${evaluatedTo.elements.map(toString).join(', ')}]`;
+      return `'[${evaluatedTo.elements.map(evaluatedToString).join(', ')}]`;
     case EvaluatedType.Object:
       return '';
     default:
