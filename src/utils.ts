@@ -7,3 +7,7 @@ export function assert<T>(condition: T, msg?: string, context?: Readonly<Record<
     throw new Error(`${msg || 'assertion failed '}, context: ${JSON.stringify(context || {})}`);
   }
 }
+
+export function log(...args: unknown[]): void {
+  console.log(...args);
+}

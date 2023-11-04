@@ -1,4 +1,4 @@
-import { assert, checkExhaustive } from '../utils';
+import { assert, checkExhaustive, log } from '../utils';
 import {
   ArrayLiteralExpression,
   BlockStatement,
@@ -46,7 +46,6 @@ import {
   SlashOperator,
 } from './model/token';
 import { evaluatedToString } from './model/evaluated-to-string';
-import { astNodeToString } from './model/ast-node-to-string';
 
 export function evaluate(node: Program): EvaluatedTo {
   return evaluateProgram(node, createEnvironment());
@@ -490,7 +489,8 @@ const builtins: Record<string, EvaluatedToBuiltIn> = {
     type: EvaluatedType.BuiltIn,
     fn: (...args: EvaluatedTo[]) => {
       for (const arg of args) {
-        console.log(evaluatedToString(arg));
+        const val = evaluatedToString(arg);
+        log(val);
       }
       return { type: EvaluatedType.Null };
     },

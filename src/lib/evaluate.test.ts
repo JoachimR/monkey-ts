@@ -1,11 +1,13 @@
-import { assert } from '../utils';
+import * as Utils from '../utils';
 import { evaluate } from './evaluate';
 import { lex } from './lex';
-import { evaluatedToString } from './model/evaluated-to-string';
 import { parse } from './parse';
 
 describe('evaluate', () => {
-  const actual = (input: string) => evaluate(parse(lex(input)));
+  const actual = (input: string) => {
+    const node = parse(lex(input));
+    return evaluate(node);
+  };
 
   it('returns last let statement', () => {
     const input = `
@@ -240,9 +242,32 @@ describe('evaluate', () => {
         value: 12,
       });
     });
+
+    it('evaluates object with array child', () => {
+      const input = `let x = { "a": [{"f": 4, "g": 5}, {"f": 6, "g": 7}], "b": 11 }; return x["a"];`;
+      expect(actual(input)).toEqual({
+        type: 'Array',
+        elements: [
+          {
+            type: 'Object',
+            pairs: {
+              '102': { key: { type: 'String', value: 'f' }, value: { type: 'Integer', value: 4 } },
+              '103': { key: { type: 'String', value: 'g' }, value: { type: 'Integer', value: 5 } },
+            },
+          },
+          {
+            type: 'Object',
+            pairs: {
+              '102': { key: { type: 'String', value: 'f' }, value: { type: 'Integer', value: 6 } },
+              '103': { key: { type: 'String', value: 'g' }, value: { type: 'Integer', value: 7 } },
+            },
+          },
+        ],
+      });
+    });
   });
   it('evaluates puts', () => {
-    const spy = jest.spyOn(console, 'log').mockImplementation(() => {
+    const spy = jest.spyOn(Utils, 'log').mockImplementation(() => {
       // do not log in test
     });
     const input = 'puts("hello", "world", 1+4);';
@@ -250,5 +275,54 @@ describe('evaluate', () => {
     expect(spy).toHaveBeenNthCalledWith(1, '"hello"');
     expect(spy).toHaveBeenNthCalledWith(2, '"world"');
     expect(spy).toHaveBeenNthCalledWith(3, '5');
+  });
+
+  it('evaluates if expression', () => {
+    const input = 'let x = 123; if (x == 123) { return x; }';
+    expect(actual(input)).toEqual({
+      type: 'Integer',
+      value: 123,
+    });
+  });
+  it('evaluates complex if expression', () => {
+    const input = 'let x = { "a": 1, "b": 2 }; if (x["a"] == 1) { return x; }';
+    expect(actual(input)).toEqual({
+      type: 'Object',
+      pairs: {
+        '97': {
+          key: {
+            type: 'String',
+            value: 'a',
+          },
+          value: {
+            type: 'Integer',
+            value: 1,
+          },
+        },
+        '98': {
+          key: {
+            type: 'String',
+            value: 'b',
+          },
+          value: {
+            type: 'Integer',
+            value: 2,
+          },
+        },
+      },
+    });
+  });
+
+  it('evaluates return statement correctly', () => {
+    const input = `if (10 > 1) {
+     if (10 > 1) {
+       return 10;
+     }
+     return 1; 
+    }`;
+    expect(actual(input)).toEqual({
+      type: 'Integer',
+      value: 10,
+    });
   });
 });
