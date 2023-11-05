@@ -1,5 +1,5 @@
 import { lex } from './lex';
-import { Token } from './model/token';
+import type { Token } from './model/token';
 
 describe('lex', () => {
   const actual = (input: string): Token[] => {

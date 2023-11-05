@@ -1,5 +1,5 @@
-import { IdentifierExpression } from './ast';
-import { EvaluatedTo } from './evaluated-to';
+import type { IdentifierExpression } from './ast';
+import type { EvaluatedTo } from './evaluated-to';
 
 export type Environment = {
   store: Record<string, EvaluatedTo | undefined>;

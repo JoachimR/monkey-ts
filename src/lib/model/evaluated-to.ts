@@ -1,44 +1,44 @@
-import { BlockStatement, IdentifierExpression } from './ast';
-import { Environment } from './environment';
+import type { BlockStatement, IdentifierExpression } from './ast';
+import type { Environment } from './environment';
 
-export enum EvaluatedType {
-  Null = 'Null',
-  ReturnValue = 'ReturnValue',
-  Integer = 'Integer',
-  Boolean = 'Boolean',
-  String = 'String',
-  Function = 'Function',
-  BuiltIn = 'BuiltIn',
-  Array = 'Array',
-  Object = 'Object',
-}
+export const evaluatedTypes = {
+  Null: 'Null',
+  ReturnValue: 'ReturnValue',
+  Integer: 'Integer',
+  Boolean: 'Boolean',
+  String: 'String',
+  Function: 'Function',
+  BuiltIn: 'BuiltIn',
+  Array: 'Array',
+  Object: 'Object',
+} as const;
 
 export type EvaluatedToInteger = {
-  type: EvaluatedType.Integer;
+  type: typeof evaluatedTypes.Integer;
   value: number;
 };
 
 export type EvaluatedToString = {
-  type: EvaluatedType.String;
+  type: typeof evaluatedTypes.String;
   value: string;
 };
 
 export type EvaluatedToBoolean = {
-  type: EvaluatedType.Boolean;
+  type: typeof evaluatedTypes.Boolean;
   value: boolean;
 };
 
 export type EvaluatedToNull = {
-  type: EvaluatedType.Null;
+  type: typeof evaluatedTypes.Null;
 };
 
 export type EvaluatedToReturnValue = {
-  type: EvaluatedType.ReturnValue;
+  type: typeof evaluatedTypes.ReturnValue;
   value: EvaluatedTo;
 };
 
 export type EvaluatedToFunction = {
-  type: EvaluatedType.Function;
+  type: typeof evaluatedTypes.Function;
   parameters: IdentifierExpression[];
   body: BlockStatement;
   environment: Environment;
@@ -47,12 +47,12 @@ export type EvaluatedToFunction = {
 export type BuiltInFn = (...args: EvaluatedTo[]) => EvaluatedTo;
 
 export type EvaluatedToBuiltIn = {
-  type: EvaluatedType.BuiltIn;
+  type: typeof evaluatedTypes.BuiltIn;
   fn: BuiltInFn;
 };
 
 export type EvaluatedToArray = {
-  type: EvaluatedType.Array;
+  type: typeof evaluatedTypes.Array;
   elements: EvaluatedTo[];
 };
 
@@ -62,7 +62,7 @@ export type EvaluatedToObjectEntry = {
   value: EvaluatedTo;
 };
 export type EvaluatedToObject = {
-  type: EvaluatedType.Object;
+  type: typeof evaluatedTypes.Object;
   pairs: Record<HashKey, EvaluatedToObjectEntry>;
 };
 

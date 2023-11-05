@@ -1,28 +1,29 @@
 import { checkExhaustive } from '../../utils';
 import { astNodeToString } from './ast-node-to-string';
-import { EvaluatedTo, EvaluatedType } from './evaluated-to';
+import type { EvaluatedTo } from './evaluated-to';
+import { evaluatedTypes } from './evaluated-to';
 
 export function evaluatedToString(evaluatedTo: EvaluatedTo): string {
   switch (evaluatedTo.type) {
-    case EvaluatedType.Null:
+    case evaluatedTypes.Null:
       return 'null';
-    case EvaluatedType.ReturnValue:
+    case evaluatedTypes.ReturnValue:
       return evaluatedToString(evaluatedTo);
-    case EvaluatedType.Integer:
-    case EvaluatedType.Boolean:
+    case evaluatedTypes.Integer:
+    case evaluatedTypes.Boolean:
       return `${evaluatedTo.value}`;
-    case EvaluatedType.String:
+    case evaluatedTypes.String:
       return `"${evaluatedTo.value}"`;
-    case EvaluatedType.Function: {
+    case evaluatedTypes.Function: {
       const parameters = evaluatedTo.parameters.map(astNodeToString).join(', ');
       const body = astNodeToString(evaluatedTo.body);
       return `fn(${parameters}){\n${body}\n}`;
     }
-    case EvaluatedType.BuiltIn:
+    case evaluatedTypes.BuiltIn:
       return 'builtin function';
-    case EvaluatedType.Array:
+    case evaluatedTypes.Array:
       return `'[${evaluatedTo.elements.map(evaluatedToString).join(', ')}]`;
-    case EvaluatedType.Object:
+    case evaluatedTypes.Object:
       return '';
     default:
       return checkExhaustive(evaluatedTo);

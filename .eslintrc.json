@@ -12,6 +12,7 @@
     "@typescript-eslint"
   ],
   "rules": {
-    "@typescript-eslint/ban-ts-comment": "warn"
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/consistent-type-imports": "error"
   }
 }

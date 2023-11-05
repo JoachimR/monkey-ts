@@ -8,142 +8,145 @@ export const PlusOperator = '+';
 export const AsteriskOperator = '*';
 export const SlashOperator = '/';
 
-export enum TokenType {
-  Identifier = 'Identifier',
-  Integer = 'Integer',
-  String = 'String',
-  Illegal = 'Illegal',
-  Eof = 'Eof',
-  Assign = 'Assign',
-  Plus = 'Plus',
-  Minus = 'Minus',
-  Bang = 'Bang',
-  Asterisk = 'Asterisk',
-  Slash = 'Slash',
-  LessThan = 'LessThan',
-  GreaterThan = 'GreaterThan',
-  Comma = 'Comma',
-  Semicolon = 'Semicolon',
-  LeftParenthesis = 'LeftParenthesis',
-  RightParenthesis = 'RightParenthesis',
-  LeftBrace = 'LeftBrace',
-  RightBrace = 'RightBrace',
-  LeftBracket = 'LeftBracket',
-  RightBracket = 'RightBracket',
-  Function = 'Function',
-  Let = 'Let',
-  If = 'If',
-  Else = 'Else',
-  Return = 'Return',
-  True = 'True',
-  False = 'False',
-  Equals = 'Equals',
-  NotEquals = 'NotEquals',
-  Colon = 'Colon',
-}
+export const tokenTypes = {
+  Identifier: 'Identifier',
+  Integer: 'Integer',
+  String: 'String',
+  Illegal: 'Illegal',
+  Eof: 'Eof',
+  Assign: 'Assign',
+  Plus: 'Plus',
+  Minus: 'Minus',
+  Bang: 'Bang',
+  Asterisk: 'Asterisk',
+  Slash: 'Slash',
+  LessThan: 'LessThan',
+  GreaterThan: 'GreaterThan',
+  Comma: 'Comma',
+  Semicolon: 'Semicolon',
+  LeftParenthesis: 'LeftParenthesis',
+  RightParenthesis: 'RightParenthesis',
+  LeftBrace: 'LeftBrace',
+  RightBrace: 'RightBrace',
+  LeftBracket: 'LeftBracket',
+  RightBracket: 'RightBracket',
+  Function: 'Function',
+  Let: 'Let',
+  If: 'If',
+  Else: 'Else',
+  Return: 'Return',
+  True: 'True',
+  False: 'False',
+  Equals: 'Equals',
+  NotEquals: 'NotEquals',
+  Colon: 'Colon',
+} as const;
+
+export type TokenType = (typeof tokenTypes)[keyof typeof tokenTypes];
+
 export type IdentifierToken = {
-  type: TokenType.Identifier;
+  type: typeof tokenTypes.Identifier;
   literal: string;
 };
 export type IntegerToken = {
-  type: TokenType.Integer;
+  type: typeof tokenTypes.Integer;
   literal: string;
 };
 export type StringToken = {
-  type: TokenType.String;
+  type: typeof tokenTypes.String;
   literal: string;
 };
 export type IllegalToken = {
-  type: TokenType.Illegal;
+  type: typeof tokenTypes.Illegal;
 };
 export type EofToken = {
-  type: TokenType.Eof;
+  type: typeof tokenTypes.Eof;
 };
 export type AssignToken = {
-  type: TokenType.Assign;
+  type: typeof tokenTypes.Assign;
 };
 export type PlusToken = {
-  type: TokenType.Plus;
+  type: typeof tokenTypes.Plus;
   operator: typeof PlusOperator;
 };
 export type MinusToken = {
-  type: TokenType.Minus;
+  type: typeof tokenTypes.Minus;
   operator: typeof MinusOperator;
 };
 export type BangToken = {
-  type: TokenType.Bang;
+  type: typeof tokenTypes.Bang;
   operator: typeof BangOperator;
 };
 export type AsteriskToken = {
-  type: TokenType.Asterisk;
+  type: typeof tokenTypes.Asterisk;
   operator: typeof AsteriskOperator;
 };
 export type SlashToken = {
-  type: TokenType.Slash;
+  type: typeof tokenTypes.Slash;
   operator: typeof SlashOperator;
 };
 export type LessThanToken = {
-  type: TokenType.LessThan;
+  type: typeof tokenTypes.LessThan;
   operator: typeof LessThanOperator;
 };
 export type GreaterThanToken = {
-  type: TokenType.GreaterThan;
+  type: typeof tokenTypes.GreaterThan;
   operator: typeof GreaterThanOperator;
 };
 export type CommaToken = {
-  type: TokenType.Comma;
+  type: typeof tokenTypes.Comma;
 };
 export type SemicolonToken = {
-  type: TokenType.Semicolon;
+  type: typeof tokenTypes.Semicolon;
 };
 export type LeftParenthesisToken = {
-  type: TokenType.LeftParenthesis;
+  type: typeof tokenTypes.LeftParenthesis;
 };
 export type RightParenthesisToken = {
-  type: TokenType.RightParenthesis;
+  type: typeof tokenTypes.RightParenthesis;
 };
 export type LeftBraceToken = {
-  type: TokenType.LeftBrace;
+  type: typeof tokenTypes.LeftBrace;
 };
 export type RightBraceToken = {
-  type: TokenType.RightBrace;
+  type: typeof tokenTypes.RightBrace;
 };
 export type LeftBracket = {
-  type: TokenType.LeftBracket;
+  type: typeof tokenTypes.LeftBracket;
 };
 export type RightBracket = {
-  type: TokenType.RightBracket;
+  type: typeof tokenTypes.RightBracket;
 };
 export type FunctionToken = {
-  type: TokenType.Function;
+  type: typeof tokenTypes.Function;
 };
 export type LetToken = {
-  type: TokenType.Let;
+  type: typeof tokenTypes.Let;
 };
 export type IfToken = {
-  type: TokenType.If;
+  type: typeof tokenTypes.If;
 };
 export type ElseToken = {
-  type: TokenType.Else;
+  type: typeof tokenTypes.Else;
 };
 export type ReturnToken = {
-  type: TokenType.Return;
+  type: typeof tokenTypes.Return;
 };
 export type TrueToken = {
-  type: TokenType.True;
+  type: typeof tokenTypes.True;
 };
 export type FalseToken = {
-  type: TokenType.False;
+  type: typeof tokenTypes.False;
 };
 export type ColonToken = {
-  type: TokenType.Colon;
+  type: typeof tokenTypes.Colon;
 };
 export type EqualsToken = {
-  type: TokenType.Equals;
+  type: typeof tokenTypes.Equals;
   operator: typeof EqualsOperator;
 };
 export type NotEqualsToken = {
-  type: TokenType.NotEquals;
+  type: typeof tokenTypes.NotEquals;
   operator: typeof NotEqualsOperator;
 };
 

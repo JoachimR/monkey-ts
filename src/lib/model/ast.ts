@@ -1,121 +1,122 @@
-import { InfixToken, PrefixToken } from './token';
+import type { InfixToken, PrefixToken } from './token';
 
-export enum StatementType {
-  Let = 'Let',
-  Return = 'Return',
-  Expression = 'Expression',
-  Block = 'Block',
-}
+export const statementTypes = {
+  Let: 'Let',
+  Return: 'Return',
+  Expression: 'Expression',
+  Block: 'Block',
+} as const;
 
 type StatementBase = {
-  astType: AstNodeType.Statement;
+  astType: typeof astNodeTypes.Statement;
 };
 
 export type LetStatement = StatementBase & {
-  statementType: StatementType.Let;
+  statementType: typeof statementTypes.Let;
   name: IdentifierExpression;
   value: Expression;
 };
 
 export type ReturnStatement = StatementBase & {
-  statementType: StatementType.Return;
+  statementType: typeof statementTypes.Return;
   value: Expression;
 };
 
 export type ExpressionStatement = StatementBase & {
-  statementType: StatementType.Expression;
+  statementType: typeof statementTypes.Expression;
   expression: Expression;
 };
 
 export type BlockStatement = StatementBase & {
-  statementType: StatementType.Block;
+  statementType: typeof statementTypes.Block;
   statements: Statement[];
 };
 
 export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatement;
 
-export enum ExpressionType {
-  Identifier = 'Identifier',
-  IntegerLiteral = 'IntegerLiteral',
-  BooleanLiteral = 'BooleanLiteral',
-  PrefixExpression = 'PrefixExpression',
-  InfixExpression = 'InfixExpression',
-  IfExpression = 'IfExpression',
-  FunctionLiteral = 'FunctionLiteral',
-  CallExpression = 'CallExpression',
-  StringLiteral = 'StringLiteral',
-  ArrayLiteral = 'ArrayLiteral',
-  IndexExpression = 'IndexExpression',
-  ObjectLiteral = 'ObjectLiteral',
-}
+export const expressionTypes = {
+  Identifier: 'Identifier',
+  IntegerLiteral: 'IntegerLiteral',
+  BooleanLiteral: 'BooleanLiteral',
+  PrefixExpression: 'PrefixExpression',
+  InfixExpression: 'InfixExpression',
+  IfExpression: 'IfExpression',
+  FunctionLiteral: 'FunctionLiteral',
+  CallExpression: 'CallExpression',
+  StringLiteral: 'StringLiteral',
+  ArrayLiteral: 'ArrayLiteral',
+  IndexExpression: 'IndexExpression',
+  ObjectLiteral: 'ObjectLiteral',
+} as const;
 
 type ExpressionBase = {
-  astType: AstNodeType.Expression;
+  astType: typeof astNodeTypes.Expression;
 };
 
 export type IdentifierExpression = ExpressionBase & {
-  expressionType: ExpressionType.Identifier;
+  expressionType: typeof expressionTypes.Identifier;
   value: string;
 };
 
 export type IntegerLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.IntegerLiteral;
+  expressionType: typeof expressionTypes.IntegerLiteral;
   value: number;
 };
+
 export type StringLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.StringLiteral;
+  expressionType: typeof expressionTypes.StringLiteral;
   value: string;
 };
 
 export type ArrayLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.ArrayLiteral;
+  expressionType: typeof expressionTypes.ArrayLiteral;
   elements: Expression[];
 };
 
 export type ObjectLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.ObjectLiteral;
+  expressionType: typeof expressionTypes.ObjectLiteral;
   pairs: [Expression, Expression][];
 };
 
 export type IndexExpression = ExpressionBase & {
-  expressionType: ExpressionType.IndexExpression;
+  expressionType: typeof expressionTypes.IndexExpression;
   left: Expression;
   index: Expression;
 };
 
 export type BooleanLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.BooleanLiteral;
+  expressionType: typeof expressionTypes.BooleanLiteral;
   value: boolean;
 };
 
 export type FunctionLiteralExpression = ExpressionBase & {
-  expressionType: ExpressionType.FunctionLiteral;
+  expressionType: typeof expressionTypes.FunctionLiteral;
   parameters: IdentifierExpression[];
   body: BlockStatement;
 };
 
 export type PrefixExpression = ExpressionBase & {
-  expressionType: ExpressionType.PrefixExpression;
+  expressionType: typeof expressionTypes.PrefixExpression;
   operator: PrefixToken['operator'];
   right: Expression;
 };
 
 export type InfixExpression = ExpressionBase & {
-  expressionType: ExpressionType.InfixExpression;
+  expressionType: typeof expressionTypes.InfixExpression;
   operator: InfixToken['operator'];
   left: Expression;
   right: Expression;
 };
 
 export type IfExpression = ExpressionBase & {
-  expressionType: ExpressionType.IfExpression;
+  expressionType: typeof expressionTypes.IfExpression;
   condition: Expression;
   consequence: BlockStatement;
   alternative?: BlockStatement;
 };
 
 export type CallExpression = ExpressionBase & {
-  expressionType: ExpressionType.CallExpression;
+  expressionType: typeof expressionTypes.CallExpression;
   func: IdentifierExpression | FunctionLiteralExpression;
   args: Expression[];
 };
@@ -136,13 +137,13 @@ export type Expression =
 
 export type AstNode = Statement | Expression | Program;
 
-export enum AstNodeType {
-  Statement = 'Statement',
-  Expression = 'Expression',
-  Program = 'Program',
-}
+export const astNodeTypes = {
+  Statement: 'Statement',
+  Expression: 'Expression',
+  Program: 'Program',
+} as const;
 
 export type Program = {
-  astType: AstNodeType.Program;
+  astType: typeof astNodeTypes.Program;
   body: Statement[];
 };

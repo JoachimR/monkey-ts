@@ -1,25 +1,19 @@
 import { assert, checkExhaustive } from '../../utils';
-import {
-  EvaluatedTo,
-  EvaluatedToBoolean,
-  EvaluatedToInteger,
-  EvaluatedToString,
-  EvaluatedType,
-  HashKey,
-} from './evaluated-to';
+import type { EvaluatedTo, EvaluatedToBoolean, EvaluatedToInteger, EvaluatedToString, HashKey } from './evaluated-to';
+import { evaluatedTypes } from './evaluated-to';
 
 export function createHashKey(arg: EvaluatedTo): HashKey {
   assert(
-    arg.type === EvaluatedType.String || arg.type === EvaluatedType.Integer || arg.type === EvaluatedType.Boolean,
+    arg.type === evaluatedTypes.String || arg.type === evaluatedTypes.Integer || arg.type === evaluatedTypes.Boolean,
     'not supported for hashing',
     { arg }
   );
   switch (arg.type) {
-    case EvaluatedType.Boolean:
+    case evaluatedTypes.Boolean:
       return hashKeyForEvaluatedToBoolean(arg);
-    case EvaluatedType.String:
+    case evaluatedTypes.String:
       return hashKeyForEvaluatedToString(arg);
-    case EvaluatedType.Integer:
+    case evaluatedTypes.Integer:
       return hashKeyForEvaluatedToInteger(arg);
     default:
       return checkExhaustive(arg);
