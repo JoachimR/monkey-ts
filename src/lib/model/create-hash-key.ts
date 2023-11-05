@@ -1,34 +1,34 @@
 import { assert, checkExhaustive } from '../../utils';
-import type { EvaluatedTo, EvaluatedToBoolean, EvaluatedToInteger, EvaluatedToString, HashKey } from './evaluated-to';
-import { evaluatedTypes } from './evaluated-to';
+import type { Value, ValueBoolean, ValueInteger, ValueString, HashKey } from './value';
+import { valueTypes } from './value';
 
-export function createHashKey(arg: EvaluatedTo): HashKey {
+export function createHashKey(arg: Value): HashKey {
   assert(
-    arg.type === evaluatedTypes.String || arg.type === evaluatedTypes.Integer || arg.type === evaluatedTypes.Boolean,
+    arg.type === valueTypes.String || arg.type === valueTypes.Integer || arg.type === valueTypes.Boolean,
     'not supported for hashing',
     { arg }
   );
   switch (arg.type) {
-    case evaluatedTypes.Boolean:
-      return hashKeyForEvaluatedToBoolean(arg);
-    case evaluatedTypes.String:
-      return hashKeyForEvaluatedToString(arg);
-    case evaluatedTypes.Integer:
-      return hashKeyForEvaluatedToInteger(arg);
+    case valueTypes.Boolean:
+      return hashKeyForValueBoolean(arg);
+    case valueTypes.String:
+      return hashKeyForValueString(arg);
+    case valueTypes.Integer:
+      return hashKeyForValueInteger(arg);
     default:
       return checkExhaustive(arg);
   }
 }
 
-function hashKeyForEvaluatedToBoolean(arg: EvaluatedToBoolean): HashKey {
+function hashKeyForValueBoolean(arg: ValueBoolean): HashKey {
   return arg.value ? 1 : 0;
 }
 
-function hashKeyForEvaluatedToInteger(arg: EvaluatedToInteger): HashKey {
+function hashKeyForValueInteger(arg: ValueInteger): HashKey {
   return arg.value;
 }
 
-function hashKeyForEvaluatedToString(arg: EvaluatedToString): HashKey {
+function hashKeyForValueString(arg: ValueString): HashKey {
   const getHashKey = (str: string): number => {
     let hash = 0;
     if (str.length === 0) {

@@ -1,15 +1,15 @@
 import type { IdentifierExpression } from './ast';
-import type { EvaluatedTo } from './evaluated-to';
+import type { Value } from './value';
 
 export type Environment = {
-  store: Record<string, EvaluatedTo | undefined>;
+  store: Record<string, Value | undefined>;
   outer?: Environment;
 };
 
-export function getFromEnvironment(env: Environment, name: string): EvaluatedTo | undefined {
-  const evaluatedTo = env.store[name];
-  if (evaluatedTo) {
-    return evaluatedTo;
+export function getFromEnvironment(env: Environment, name: string): Value | undefined {
+  const value = env.store[name];
+  if (value) {
+    return value;
   }
   if (env.outer) {
     return getFromEnvironment(env.outer, name);
@@ -17,13 +17,13 @@ export function getFromEnvironment(env: Environment, name: string): EvaluatedTo 
   return undefined;
 }
 
-export function storeInEnvironment(env: Environment, name: string, value: EvaluatedTo): void {
+export function storeInEnvironment(env: Environment, name: string, value: Value): void {
   env.store[name] = value;
 }
 
 export const createEnvironment = (
   outer?: Environment,
-  context?: { parameters: IdentifierExpression[]; values: EvaluatedTo[] }
+  context?: { parameters: IdentifierExpression[]; values: Value[] }
 ): Environment => {
   const env: Environment = {
     store: {},

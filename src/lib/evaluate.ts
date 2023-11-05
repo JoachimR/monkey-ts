@@ -24,16 +24,16 @@ import { createHashKey } from './model/create-hash-key';
 import type { Environment } from './model/environment';
 import { createEnvironment, getFromEnvironment, storeInEnvironment } from './model/environment';
 import type {
-  EvaluatedTo,
-  EvaluatedToArray,
-  EvaluatedToBoolean,
-  EvaluatedToBuiltIn,
-  EvaluatedToFunction,
-  EvaluatedToInteger,
-  EvaluatedToObject,
-  EvaluatedToString,
-} from './model/evaluated-to';
-import { evaluatedTypes } from './model/evaluated-to';
+  Value,
+  ValueArray,
+  ValueBoolean,
+  ValueBuiltIn,
+  ValueFunction,
+  ValueInteger,
+  ValueObject,
+  ValueString,
+} from './model/value';
+import { valueTypes } from './model/value';
 import {
   AsteriskOperator,
   BangOperator,
@@ -45,24 +45,24 @@ import {
   PlusOperator,
   SlashOperator,
 } from './model/token';
-import { evaluatedToString } from './model/evaluated-to-string';
+import { valueToString } from './model/value-to-string';
 
-export function evaluate(node: Program): EvaluatedTo {
+export function evaluate(node: Program): Value {
   return evaluateProgram(node, createEnvironment());
 }
 
-function evaluateProgram(node: Program, env: Environment): EvaluatedTo {
-  let result!: EvaluatedTo;
+function evaluateProgram(node: Program, env: Environment): Value {
+  let result!: Value;
   for (const statement of node.body) {
     result = evaluateStatement(statement, env);
-    if (result.type === evaluatedTypes.ReturnValue) {
+    if (result.type === valueTypes.ReturnValue) {
       return result.value;
     }
   }
   return result;
 }
 
-function evaluateStatement(node: Statement, env: Environment): EvaluatedTo {
+function evaluateStatement(node: Statement, env: Environment): Value {
   switch (node.statementType) {
     case statementTypes.Let:
       return evaluateLetStatement(node, env);
@@ -77,7 +77,7 @@ function evaluateStatement(node: Statement, env: Environment): EvaluatedTo {
   }
 }
 
-function evaluateExpression(node: Expression, env: Environment): EvaluatedTo {
+function evaluateExpression(node: Expression, env: Environment): Value {
   switch (node.expressionType) {
     case expressionTypes.BooleanLiteral:
       return evaluateBooleanLiteralExpression(node);
@@ -108,106 +108,101 @@ function evaluateExpression(node: Expression, env: Environment): EvaluatedTo {
   }
 }
 
-function evaluateBooleanLiteralExpression(node: BooleanLiteralExpression): EvaluatedToBoolean {
+function evaluateBooleanLiteralExpression(node: BooleanLiteralExpression): ValueBoolean {
   return {
-    type: evaluatedTypes.Boolean,
+    type: valueTypes.Boolean,
     value: node.value,
   };
 }
 
-function evaluateIntegerLiteralExpression(node: IntegerLiteralExpression): EvaluatedToInteger {
+function evaluateIntegerLiteralExpression(node: IntegerLiteralExpression): ValueInteger {
   return {
-    type: evaluatedTypes.Integer,
+    type: valueTypes.Integer,
     value: node.value,
   };
 }
 
-function evaluateStringLiteral(node: StringLiteralExpression): EvaluatedTo {
+function evaluateStringLiteral(node: StringLiteralExpression): Value {
   return {
-    type: evaluatedTypes.String,
+    type: valueTypes.String,
     value: node.value,
   };
 }
 
-function evaluateIdentifierExpression(node: IdentifierExpression, env: Environment): EvaluatedTo {
+function evaluateIdentifierExpression(node: IdentifierExpression, env: Environment): Value {
   const value = getFromEnvironment(env, node.value) ?? builtins[node.value];
   assert(value !== undefined, 'identifier not found', { node, env });
   return value;
 }
 
-function evaluateFunctionLiteralExpression(node: FunctionLiteralExpression, env: Environment): EvaluatedToFunction {
+function evaluateFunctionLiteralExpression(node: FunctionLiteralExpression, env: Environment): ValueFunction {
   return {
-    type: evaluatedTypes.Function,
+    type: valueTypes.Function,
     parameters: node.parameters,
     body: node.body,
     environment: env,
   };
 }
 
-function evaluateCallExpression(node: CallExpression, env: Environment): EvaluatedTo {
+function evaluateCallExpression(node: CallExpression, env: Environment): Value {
   const createArgs = () => node.args.map((arg) => evaluateExpression(arg, env));
 
   const expression = evaluateExpression(node.func, env);
-  if (expression.type === evaluatedTypes.BuiltIn) {
+  if (expression.type === valueTypes.BuiltIn) {
     return expression.fn(...createArgs());
   }
 
-  assert(expression.type === evaluatedTypes.Function, 'not a function', { expression });
+  assert(expression.type === valueTypes.Function, 'not a function', { expression });
   const extendedEnv = createEnvironment(expression.environment, {
     parameters: expression.parameters,
     values: createArgs(),
   });
   const result = evaluateStatement(expression.body, extendedEnv);
-  if (result.type === evaluatedTypes.ReturnValue) {
+  if (result.type === valueTypes.ReturnValue) {
     return result.value;
   }
   return result;
 }
 
-function evaluateInfixExpression(
-  node: InfixExpression,
-  env: Environment
-): EvaluatedToBoolean | EvaluatedToInteger | EvaluatedToString {
+function evaluateInfixExpression(node: InfixExpression, env: Environment): ValueBoolean | ValueInteger | ValueString {
   switch (node.operator) {
     case EqualsOperator:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: equals(evaluateExpression(node.left, env), evaluateExpression(node.right, env), env),
       };
     case NotEqualsOperator:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: !equals(evaluateExpression(node.left, env), evaluateExpression(node.right, env), env),
       };
     case GreaterThanOperator:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: greaterThan(node.left, node.right, env),
       };
     case LessThanOperator:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: lessThan(node.left, node.right, env),
       };
     case PlusOperator: {
       const value = plus(node.left, node.right, env);
-      return typeof value === 'number'
-        ? { type: evaluatedTypes.Integer, value }
-        : { type: evaluatedTypes.String, value };
+      return typeof value === 'number' ? { type: valueTypes.Integer, value } : { type: valueTypes.String, value };
     }
     case MinusOperator:
       return {
-        type: evaluatedTypes.Integer,
+        type: valueTypes.Integer,
         value: minus(node.left, node.right, env),
       };
     case AsteriskOperator:
       return {
-        type: evaluatedTypes.Integer,
+        type: valueTypes.Integer,
         value: multiply(node.left, node.right, env),
       };
     case SlashOperator:
       return {
-        type: evaluatedTypes.Integer,
+        type: valueTypes.Integer,
         value: divide(node.left, node.right, env),
       };
     default:
@@ -215,7 +210,7 @@ function evaluateInfixExpression(
   }
 }
 
-function evaluatePrefixExpression(node: PrefixExpression, env: Environment): EvaluatedToBoolean | EvaluatedToInteger {
+function evaluatePrefixExpression(node: PrefixExpression, env: Environment): ValueBoolean | ValueInteger {
   switch (node.operator) {
     case BangOperator:
       return evaluateBangOperatorExpression(evaluateExpression(node.right, env));
@@ -226,51 +221,51 @@ function evaluatePrefixExpression(node: PrefixExpression, env: Environment): Eva
   }
 }
 
-function evaluateIfExpression(node: IfExpression, env: Environment): EvaluatedTo {
-  const evaluatedCondition = evaluateExpression(node.condition, env);
-  if (isTruthy(evaluatedCondition)) {
+function evaluateIfExpression(node: IfExpression, env: Environment): Value {
+  const value = evaluateExpression(node.condition, env);
+  if (isTruthy(value)) {
     return evaluateStatement(node.consequence, env);
   }
   if (node.alternative !== undefined) {
     return evaluateStatement(node.alternative, env);
   }
-  return { type: evaluatedTypes.Null };
+  return { type: valueTypes.Null };
 }
 
-function evaluateBlockStatement(node: BlockStatement, env: Environment): EvaluatedTo {
+function evaluateBlockStatement(node: BlockStatement, env: Environment): Value {
   assert(node.statements.length > 0, 'invalid block statement', { node, env });
-  let result!: EvaluatedTo;
+  let result!: Value;
   for (const statement of node.statements) {
     result = evaluateStatement(statement, env);
-    if (result.type === evaluatedTypes.ReturnValue) {
+    if (result.type === valueTypes.ReturnValue) {
       return result;
     }
   }
   return result;
 }
 
-function evaluateLetStatement(node: LetStatement, env: Environment): EvaluatedTo {
+function evaluateLetStatement(node: LetStatement, env: Environment): Value {
   const value = evaluateExpression(node.value, env);
   storeInEnvironment(env, node.name.value, value);
   return value;
 }
 
-function evaluateReturnStatement(node: ReturnStatement, env: Environment): EvaluatedTo {
+function evaluateReturnStatement(node: ReturnStatement, env: Environment): Value {
   return {
-    type: evaluatedTypes.ReturnValue,
+    type: valueTypes.ReturnValue,
     value: evaluateExpression(node.value, env),
   };
 }
 
-function evaluateArrayLiteralExpression(node: ArrayLiteralExpression, env: Environment): EvaluatedTo {
+function evaluateArrayLiteralExpression(node: ArrayLiteralExpression, env: Environment): Value {
   return {
-    type: evaluatedTypes.Array,
+    type: valueTypes.Array,
     elements: node.elements.map((element) => evaluateExpression(element, env)),
   };
 }
 
-function evaluateObjectLiteralExpression(node: ObjectLiteralExpression, env: Environment): EvaluatedToObject {
-  const pairs: EvaluatedToObject['pairs'] = {};
+function evaluateObjectLiteralExpression(node: ObjectLiteralExpression, env: Environment): ValueObject {
+  const pairs: ValueObject['pairs'] = {};
   for (const pair of node.pairs) {
     const key = evaluateExpression(pair[0], env);
     const hashKey = createHashKey(key);
@@ -278,83 +273,78 @@ function evaluateObjectLiteralExpression(node: ObjectLiteralExpression, env: Env
     pairs[hashKey] = { key, value };
   }
   return {
-    type: evaluatedTypes.Object,
+    type: valueTypes.Object,
     pairs,
   };
 }
 
-function evaluateIndexExpression(node: IndexExpression, env: Environment): EvaluatedTo {
+function evaluateIndexExpression(node: IndexExpression, env: Environment): Value {
   const left = evaluateExpression(node.left, env);
   const index = evaluateExpression(node.index, env);
-  if (left.type === evaluatedTypes.Array) {
-    assert(index.type === evaluatedTypes.Integer, 'not supported for indexing', { left, index });
+  if (left.type === valueTypes.Array) {
+    assert(index.type === valueTypes.Integer, 'not supported for indexing', { left, index });
     return evalArrayIndexAccess(left, index);
   }
-  assert(left.type === evaluatedTypes.Object, 'not supported for indexing', { left });
+  assert(left.type === valueTypes.Object, 'not supported for indexing', { left });
   assert(
-    index.type === evaluatedTypes.Integer ||
-      index.type === evaluatedTypes.String ||
-      index.type === evaluatedTypes.Boolean,
+    index.type === valueTypes.Integer || index.type === valueTypes.String || index.type === valueTypes.Boolean,
     'not supported for indexing',
     { left, index }
   );
   return evalObjectIndexAccess(left, index);
 }
 
-function evalArrayIndexAccess(node: EvaluatedToArray, index: EvaluatedToInteger): EvaluatedTo {
+function evalArrayIndexAccess(node: ValueArray, index: ValueInteger): Value {
   const idx = index.value;
   assert(idx > -1 && idx < node.elements.length, 'invalid index', { node, index });
   return node.elements[idx];
 }
 
-function evalObjectIndexAccess(
-  node: EvaluatedToObject,
-  index: EvaluatedToInteger | EvaluatedToString | EvaluatedToBoolean
-): EvaluatedTo {
+function evalObjectIndexAccess(node: ValueObject, index: ValueInteger | ValueString | ValueBoolean): Value {
   const idx = createHashKey(index);
   const val = node.pairs[idx];
   if (!val) {
-    return { type: evaluatedTypes.Null };
+    return { type: valueTypes.Null };
   }
   return val.value;
 }
 
-function evaluateBangOperatorExpression(right: EvaluatedTo): EvaluatedToBoolean {
+function evaluateBangOperatorExpression(right: Value): ValueBoolean {
   switch (right.type) {
-    case evaluatedTypes.Boolean:
+    case valueTypes.Boolean:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: !right.value,
       };
-    case evaluatedTypes.Null:
+    case valueTypes.Null:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: true,
       };
     default:
       return {
-        type: evaluatedTypes.Boolean,
+        type: valueTypes.Boolean,
         value: false,
       };
   }
 }
 
-function evaluateMinusOperatorExpression(argument: EvaluatedTo): EvaluatedToInteger {
-  assert(argument.type === evaluatedTypes.Integer, 'invalid argument for minus operator', { argument });
+function evaluateMinusOperatorExpression(argument: Value): ValueInteger {
+  assert(argument.type === valueTypes.Integer, 'invalid argument for minus operator', { argument });
   return {
-    type: evaluatedTypes.Integer,
+    type: valueTypes.Integer,
     value: -argument.value,
   };
 }
 
-function equals(a: EvaluatedTo, b: EvaluatedTo, env: Environment): boolean {
+function equals(a: Value, b: Value, env: Environment): boolean {
   return (
-    (a.type === evaluatedTypes.Null && b.type === evaluatedTypes.Null) ||
-    (a.type === evaluatedTypes.Boolean && b.type === evaluatedTypes.Boolean && a.value === b.value) ||
-    (a.type === evaluatedTypes.String && b.type === evaluatedTypes.String && a.value === b.value) ||
-    (a.type === evaluatedTypes.Integer && b.type === evaluatedTypes.Integer && a.value === b.value) ||
-    (a.type === evaluatedTypes.Array &&
-      b.type === evaluatedTypes.Array &&
+    (a.type === valueTypes.Null && b.type === valueTypes.Null) ||
+    (a.type === valueTypes.Boolean && b.type === valueTypes.Boolean && a.value === b.value) ||
+    (a.type === valueTypes.String && b.type === valueTypes.String && a.value === b.value) ||
+    (a.type === valueTypes.Integer && b.type === valueTypes.Integer && a.value === b.value) ||
+    (a.type === valueTypes.Array &&
+      b.type === valueTypes.Array &&
       a.elements.length === b.elements.length &&
       a.elements.every((item, index) => equals(item, b.elements[index], env)))
   );
@@ -370,14 +360,14 @@ function lessThan(left: Expression, right: Expression, env: Environment): boolea
 
 function plus(left: Expression, right: Expression, env: Environment): string | number {
   const a = evaluateExpression(left, env);
-  if (a.type === evaluatedTypes.String) {
+  if (a.type === valueTypes.String) {
     const b = evaluateExpression(right, env);
-    assert(b.type === evaluatedTypes.String, 'invalid argument for string infix operation', { right: b });
+    assert(b.type === valueTypes.String, 'invalid argument for string infix operation', { right: b });
     return a.value + b.value;
   }
-  assert(a.type === evaluatedTypes.Integer, 'invalid argument for integer infix operation', { left: a });
+  assert(a.type === valueTypes.Integer, 'invalid argument for integer infix operation', { left: a });
   const b = evaluateExpression(right, env);
-  assert(b.type === evaluatedTypes.Integer, 'invalid argument for integer infix operation', { right: b });
+  assert(b.type === valueTypes.Integer, 'invalid argument for integer infix operation', { right: b });
   return a.value + b.value;
 }
 
@@ -400,62 +390,62 @@ function integerOperation<T>(
   operation: (a: number, b: number) => T
 ): T {
   const a = evaluateExpression(left, env);
-  assert(a.type === evaluatedTypes.Integer, 'invalid argument for integer infix operation', { left: a });
+  assert(a.type === valueTypes.Integer, 'invalid argument for integer infix operation', { left: a });
   const b = evaluateExpression(right, env);
-  assert(b.type === evaluatedTypes.Integer, 'invalid argument for integer infix operation', { right: b });
+  assert(b.type === valueTypes.Integer, 'invalid argument for integer infix operation', { right: b });
   return operation(a.value, b.value);
 }
 
-function isTruthy(arg: EvaluatedTo): boolean {
+function isTruthy(arg: Value): boolean {
   switch (arg.type) {
-    case evaluatedTypes.Null:
+    case valueTypes.Null:
       return false;
-    case evaluatedTypes.Boolean:
+    case valueTypes.Boolean:
       return arg.value;
     default:
       return true;
   }
 }
 
-const builtins: Record<string, EvaluatedToBuiltIn> = {
+const builtins: Record<string, ValueBuiltIn> = {
   len: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       assert(args.length === 1, 'wrong number of arguments', { args });
       const arg = args[0];
-      if (arg.type === evaluatedTypes.String) {
+      if (arg.type === valueTypes.String) {
         return {
-          type: evaluatedTypes.Integer,
+          type: valueTypes.Integer,
           value: arg.value.length,
         };
       }
-      assert(arg.type === evaluatedTypes.Array, 'invalid argument', { args });
+      assert(arg.type === valueTypes.Array, 'invalid argument', { args });
       return {
-        type: evaluatedTypes.Integer,
+        type: valueTypes.Integer,
         value: arg.elements.length,
       };
     },
   },
   first: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       assert(args.length === 1, 'wrong number of arguments', { args });
       const arg = args[0];
-      assert(arg.type === evaluatedTypes.Array, 'invalid argument', { args });
+      assert(arg.type === valueTypes.Array, 'invalid argument', { args });
       if (arg.elements.length === 0) {
-        return { type: evaluatedTypes.Null };
+        return { type: valueTypes.Null };
       }
       return arg.elements[0];
     },
   },
   last: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       assert(args.length === 1, 'wrong number of arguments', { args });
       const arg = args[0];
-      assert(arg.type === evaluatedTypes.Array, 'invalid argument', { args });
+      assert(arg.type === valueTypes.Array, 'invalid argument', { args });
       if (arg.elements.length === 0) {
-        return { type: evaluatedTypes.Null };
+        return { type: valueTypes.Null };
       }
       const last = arg.elements.at(-1);
       assert(last, 'invalid argument', { args });
@@ -463,40 +453,40 @@ const builtins: Record<string, EvaluatedToBuiltIn> = {
     },
   },
   rest: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       assert(args.length === 1, 'wrong number of arguments', { args });
       const arg = args[0];
-      assert(arg.type === evaluatedTypes.Array, 'invalid argument', { args });
+      assert(arg.type === valueTypes.Array, 'invalid argument', { args });
       if (arg.elements.length === 0) {
-        return { type: evaluatedTypes.Null };
+        return { type: valueTypes.Null };
       }
       return {
-        type: evaluatedTypes.Array,
+        type: valueTypes.Array,
         elements: arg.elements.slice(1),
       };
     },
   },
   push: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       assert(args.length === 2, 'wrong number of arguments', { args });
       const arg = args[0];
-      assert(arg.type === evaluatedTypes.Array, 'invalid argument', { args });
+      assert(arg.type === valueTypes.Array, 'invalid argument', { args });
       return {
-        type: evaluatedTypes.Array,
+        type: valueTypes.Array,
         elements: [...arg.elements, args[1]],
       };
     },
   },
   puts: {
-    type: evaluatedTypes.BuiltIn,
-    fn: (...args: EvaluatedTo[]) => {
+    type: valueTypes.BuiltIn,
+    fn: (...args: Value[]) => {
       for (const arg of args) {
-        const val = evaluatedToString(arg);
+        const val = valueToString(arg);
         log(val);
       }
-      return { type: evaluatedTypes.Null };
+      return { type: valueTypes.Null };
     },
   },
 };

@@ -2,7 +2,8 @@ import readline from 'readline';
 import { evaluate } from '../lib/evaluate';
 import { lex } from '../lib/lex';
 import { parse } from '../lib/parse';
-import { evaluatedToString } from '../lib/model/evaluated-to-string';
+import { valueToString } from '../lib/model/value-to-string';
+import { log } from '../utils';
 
 export const start = (): void => {
   const rl = readline.createInterface({
@@ -14,8 +15,8 @@ export const start = (): void => {
   rl.prompt();
 
   rl.on('line', (input: string) => {
-    const evaluated = evalInput(input);
-    console.log(evaluatedToString(evaluated));
+    const value = evalInput(input);
+    log(valueToString(value));
     rl.prompt();
   });
 };
