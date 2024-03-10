@@ -68,6 +68,7 @@ class Parser {
     [tokenTypes.Function]: this.parseFunctionLiteral.bind(this),
     [tokenTypes.LeftBracket]: this.parseArrayLiteral.bind(this),
     [tokenTypes.LeftBrace]: this.parseObjectLiteral.bind(this),
+    [tokenTypes.ForEach]: this.parseForEachExpression.bind(this),
   };
 
   private infixParseFns: ParseInfixFnMap = {
@@ -296,6 +297,36 @@ class Parser {
       consequence,
       alternative,
     };
+  }
+  private parseForEachExpression(): IfExpression {
+    assert(this.currentToken.type === tokenTypes.ForEach, 'invalid token', { token: this.currentToken });
+    // this.nextTokenExpecting(tokenTypes.LeftParenthesis);
+    // this.nextToken();
+    //
+    // const condition = this.parseExpression(Precedence.Lowest);
+    //
+    // this.nextTokenExpecting(tokenTypes.RightParenthesis);
+    // this.nextTokenExpecting(tokenTypes.LeftBrace);
+    // const consequence = this.parseBlockStatement();
+    //
+    // if (this.peekToken?.type !== tokenTypes.Else) {
+    //   return {
+    //     astType: astNodeTypes.Expression,
+    //     expressionType: expressionTypes.IfExpression,
+    //     condition,
+    //     consequence,
+    //   };
+    // }
+    //
+    // this.nextToken();
+    // assert(this.nextTokenExpecting(tokenTypes.LeftBrace));
+    // const alternative = this.parseBlockStatement();
+    // return {
+    //   astType: astNodeTypes.Expression,
+    //   expressionType: expressionTypes.IfExpression,
+    //   condition,
+    //   consequence,
+    //   alternative,
   }
 
   private parseFunctionLiteral(): FunctionLiteralExpression {

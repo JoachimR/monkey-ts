@@ -178,4 +178,36 @@ describe('lex', () => {
       { type: 'Eof' },
     ]);
   });
+  it('lexes an if statement', () => {
+    expect(actual('if (5 < 10) { return true; }')).toEqual([
+      { type: 'If' },
+      { type: 'LeftParenthesis' },
+      { type: 'Integer', literal: '5' },
+      { type: 'LessThan', operator: '<' },
+      { type: 'Integer', literal: '10' },
+      { type: 'RightParenthesis' },
+      { type: 'LeftBrace' },
+      { type: 'Return' },
+      { type: 'True' },
+      { type: 'Semicolon' },
+      { type: 'RightBrace' },
+      { type: 'Eof' },
+    ]);
+  });
+
+  it('lexes a forEach loop', () => {
+    expect(actual('forEach [1,2,3] { }')).toEqual([
+      { type: 'ForEach' },
+      { type: 'LeftBracket' },
+      { type: 'Integer', literal: '1' },
+      { type: 'Comma' },
+      { type: 'Integer', literal: '2' },
+      { type: 'Comma' },
+      { type: 'Integer', literal: '3' },
+      { type: 'RightBracket' },
+      { type: 'LeftBrace' },
+      { type: 'RightBrace' },
+      { type: 'Eof' },
+    ]);
+  });
 });

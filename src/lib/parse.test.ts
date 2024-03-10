@@ -351,4 +351,12 @@ describe('parse', () => {
       ],
     });
   });
+
+  it('parses an if statement', () => {
+    expect(actual('if (5 < 10) { return true; }')).toEqual('');
+  });
+
+  it('parses a forEach loop', () => {
+    expect(actual('forEach [1,2,3] { }')).toEqual('');
+  });
 });
