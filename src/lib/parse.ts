@@ -6,6 +6,7 @@ import type {
   CallExpression,
   Expression,
   ExpressionStatement,
+  ForEachExpression,
   FunctionLiteralExpression,
   IdentifierExpression,
   IfExpression,
@@ -298,35 +299,31 @@ class Parser {
       alternative,
     };
   }
-  private parseForEachExpression(): IfExpression {
+  private parseForEachExpression(): ForEachExpression {
     assert(this.currentToken.type === tokenTypes.ForEach, 'invalid token', { token: this.currentToken });
-    // this.nextTokenExpecting(tokenTypes.LeftParenthesis);
-    // this.nextToken();
-    //
-    // const condition = this.parseExpression(Precedence.Lowest);
-    //
-    // this.nextTokenExpecting(tokenTypes.RightParenthesis);
-    // this.nextTokenExpecting(tokenTypes.LeftBrace);
-    // const consequence = this.parseBlockStatement();
-    //
-    // if (this.peekToken?.type !== tokenTypes.Else) {
-    //   return {
-    //     astType: astNodeTypes.Expression,
-    //     expressionType: expressionTypes.IfExpression,
-    //     condition,
-    //     consequence,
-    //   };
-    // }
-    //
-    // this.nextToken();
-    // assert(this.nextTokenExpecting(tokenTypes.LeftBrace));
-    // const alternative = this.parseBlockStatement();
-    // return {
-    //   astType: astNodeTypes.Expression,
-    //   expressionType: expressionTypes.IfExpression,
-    //   condition,
-    //   consequence,
-    //   alternative,
+
+    if (this.peekToken?.type === tokenTypes.LeftBracket) {
+      this.nextTokenExpecting(tokenTypes.LeftBracket);
+      const collection = this.parseArrayLiteral();
+      this.nextToken();
+      const body = this.parseBlockStatement();
+      return {
+        astType: astNodeTypes.Expression,
+        expressionType: expressionTypes.ForEachExpression,
+        collection,
+        body,
+      };
+    }
+    this.nextToken();
+    const collection = this.parseIdentifier();
+    this.nextToken();
+    const body = this.parseBlockStatement();
+    return {
+      astType: astNodeTypes.Expression,
+      expressionType: expressionTypes.ForEachExpression,
+      collection,
+      body,
+    };
   }
 
   private parseFunctionLiteral(): FunctionLiteralExpression {

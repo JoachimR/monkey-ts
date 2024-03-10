@@ -210,4 +210,23 @@ describe('lex', () => {
       { type: 'Eof' },
     ]);
   });
+  it('lexes a forEach loop with a variable', () => {
+    expect(actual('x = [1,2,3]; forEach x { }')).toEqual([
+      { literal: 'x', type: 'Identifier' },
+      { type: 'Assign' },
+      { type: 'LeftBracket' },
+      { literal: '1', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '2', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '3', type: 'Integer' },
+      { type: 'RightBracket' },
+      { type: 'Semicolon' },
+      { type: 'ForEach' },
+      { literal: 'x', type: 'Identifier' },
+      { type: 'LeftBrace' },
+      { type: 'RightBrace' },
+      { type: 'Eof' },
+    ]);
+  });
 });

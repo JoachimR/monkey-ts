@@ -353,10 +353,66 @@ describe('parse', () => {
   });
 
   it('parses an if statement', () => {
-    expect(actual('if (5 < 10) { return true; }')).toEqual('');
+    expect(actual('if (5 < 10) { return true; }')).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            condition: {
+              astType: 'Expression',
+              expressionType: 'InfixExpression',
+              left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
+              operator: '<',
+              right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 10 },
+            },
+            consequence: {
+              astType: 'Statement',
+              statementType: 'Block',
+              statements: [
+                {
+                  astType: 'Statement',
+                  statementType: 'Return',
+                  value: { astType: 'Expression', expressionType: 'BooleanLiteral', value: true },
+                },
+              ],
+            },
+            expressionType: 'IfExpression',
+          },
+          statementType: 'Expression',
+        },
+      ],
+    });
   });
 
   it('parses a forEach loop', () => {
-    expect(actual('forEach [1,2,3] { }')).toEqual('');
+    expect(actual('forEach [1,2,3] { }')).toEqual({
+      astType: 'Program',
+      body: [
+        {
+          astType: 'Statement',
+          expression: {
+            astType: 'Expression',
+            body: { astType: 'Statement', statementType: 'Block', statements: [] },
+            collection: {
+              astType: 'Expression',
+              elements: [
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
+              ],
+              expressionType: 'ArrayLiteral',
+            },
+            expressionType: 'ForEachExpression',
+          },
+          statementType: 'Expression',
+        },
+      ],
+    });
+  });
+  it('parses a forEach loop with variable', () => {
+    // todo implement
+    expect(actual('let y = 0; let x = [1,2,3]; forEach x { y = y + $i }')).toMatchInlineSnapshot();
   });
 });

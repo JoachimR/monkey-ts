@@ -41,6 +41,7 @@ export const expressionTypes = {
   PrefixExpression: 'PrefixExpression',
   InfixExpression: 'InfixExpression',
   IfExpression: 'IfExpression',
+  ForEachExpression: 'ForEachExpression',
   FunctionLiteral: 'FunctionLiteral',
   CallExpression: 'CallExpression',
   StringLiteral: 'StringLiteral',
@@ -115,6 +116,12 @@ export type IfExpression = ExpressionBase & {
   alternative?: BlockStatement;
 };
 
+export type ForEachExpression = ExpressionBase & {
+  expressionType: typeof expressionTypes.ForEachExpression;
+  collection: Expression;
+  body: BlockStatement;
+};
+
 export type CallExpression = ExpressionBase & {
   expressionType: typeof expressionTypes.CallExpression;
   func: IdentifierExpression | FunctionLiteralExpression;
@@ -133,6 +140,7 @@ export type Expression =
   | InfixExpression
   | IndexExpression
   | IfExpression
+  | ForEachExpression
   | CallExpression;
 
 export type AstNode = Statement | Expression | Program;
