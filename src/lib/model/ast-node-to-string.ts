@@ -1,59 +1,58 @@
 import { checkExhaustive } from '../../utils';
 import type { AstNode } from './ast';
-import { astNodeTypes, expressionTypes, statementTypes } from './ast';
 
 export function astNodeToString(node: AstNode): string {
   switch (node.astType) {
-    case astNodeTypes.Program:
+    case 'program':
       return node.body.map(astNodeToString).join('');
-    case astNodeTypes.Statement:
+    case 'statement':
       switch (node.statementType) {
-        case statementTypes.Let:
+        case 'let':
           return `let ${astNodeToString(node.name)} = ${astNodeToString(node.value)};`;
-        case statementTypes.Return:
+        case 'return':
           return `return ${astNodeToString(node.value)};`;
-        case statementTypes.Expression:
+        case 'expression':
           return `${astNodeToString(node.expression)}`;
-        case statementTypes.Block:
+        case 'block':
           return node.statements.map(astNodeToString).join('');
-        case statementTypes.Reassign:
+        case 'reassign':
           return `${astNodeToString(node.name)} = ${astNodeToString(node.value)};`;
-        case statementTypes.ForEach:
-          return `${node.statementType} in ${astNodeToString(node.array)}; { ${node.body.statements
+        case 'forEach':
+          return `forEach in ${astNodeToString(node.array)}; { ${node.body.statements
             .map(astNodeToString)
             .join('')} } `;
         default:
           return checkExhaustive(node);
       }
-    case astNodeTypes.Expression:
+    case 'expression':
       switch (node.expressionType) {
-        case expressionTypes.Identifier:
+        case 'identifier':
           return node.value;
-        case expressionTypes.IntegerLiteral:
-          return `${node.value.toString()}`;
-        case expressionTypes.StringLiteral:
-          return `${node.value}`;
-        case expressionTypes.BooleanLiteral:
-          return `${node.value.toString()}`;
-        case expressionTypes.ArrayLiteral:
-          return node.elements.map(astNodeToString).join(', ');
-        case expressionTypes.ObjectLiteral:
-          return node.pairs.map((pair) => `${astNodeToString(pair[0])}: ${astNodeToString(pair[1])}`).join(', ');
-        case expressionTypes.FunctionLiteral:
-          return node.parameters.map(astNodeToString).join(', ');
-        case expressionTypes.CallExpression:
+        case 'integerLiteral':
+          return node.value.toString();
+        case 'stringLiteral':
+          return `"${node.value}"`;
+        case 'booleanLiteral':
+          return node.value.toString();
+        case 'arrayLiteral':
+          return `[${node.elements.map(astNodeToString).join(', ')}]`;
+        case 'objectLiteral':
+          return `{${node.pairs
+            .map(([key, value]) => `${astNodeToString(key)}: ${astNodeToString(value)}`)
+            .join(', ')}}`;
+        case 'functionLiteral':
+          return `fn(${node.parameters.map(astNodeToString).join(', ')}) ${astNodeToString(node.body)}`;
+        case 'callExpression':
           return `${astNodeToString(node.func)}(${node.args.map(astNodeToString).join(', ')})`;
-        case expressionTypes.PrefixExpression:
+        case 'prefixExpression':
           return `(${node.operator}${astNodeToString(node.right)})`;
-        case expressionTypes.InfixExpression:
+        case 'infixExpression':
           return `(${astNodeToString(node.left)} ${node.operator} ${astNodeToString(node.right)})`;
-        case expressionTypes.IfExpression:
-          return node.alternative
-            ? `${`if (${astNodeToString(node.condition)}) {${astNodeToString(
-                node.consequence
-              )}}`} else {${astNodeToString(node.alternative)}}`
-            : `if (${astNodeToString(node.condition)}) {${astNodeToString(node.consequence)}}`;
-        case expressionTypes.IndexExpression:
+        case 'ifExpression':
+          return `if (${astNodeToString(node.condition)}) ${astNodeToString(node.consequence)}${
+            node.alternative ? ` else ${astNodeToString(node.alternative)}` : ''
+          }`;
+        case 'indexExpression':
           return `${astNodeToString(node.left)}[${astNodeToString(node.index)}]`;
         default:
           return checkExhaustive(node);

@@ -11,29 +11,55 @@ describe('parse', () => {
     let foobar = 123;
   `;
 
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          name: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
-          statementType: 'Let',
-          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
-        },
-        {
-          astType: 'Statement',
-          name: { astType: 'Expression', expressionType: 'Identifier', value: 'y' },
-          statementType: 'Let',
-          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 10 },
-        },
-        {
-          astType: 'Statement',
-          name: { astType: 'Expression', expressionType: 'Identifier', value: 'foobar' },
-          statementType: 'Let',
-          value: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 123 },
-        },
-      ],
-    });
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "name": {
+              "astType": "expression",
+              "expressionType": "identifier",
+              "value": "x",
+            },
+            "statementType": "let",
+            "value": {
+              "astType": "expression",
+              "expressionType": "integerLiteral",
+              "value": 5,
+            },
+          },
+          {
+            "astType": "statement",
+            "name": {
+              "astType": "expression",
+              "expressionType": "identifier",
+              "value": "y",
+            },
+            "statementType": "let",
+            "value": {
+              "astType": "expression",
+              "expressionType": "integerLiteral",
+              "value": 10,
+            },
+          },
+          {
+            "astType": "statement",
+            "name": {
+              "astType": "expression",
+              "expressionType": "identifier",
+              "value": "foobar",
+            },
+            "statementType": "let",
+            "value": {
+              "astType": "expression",
+              "expressionType": "integerLiteral",
+              "value": 123,
+            },
+          },
+        ],
+      }
+    `);
   });
   it('prefix', () => {
     const input = `
@@ -43,371 +69,531 @@ describe('parse', () => {
      !true;
      !false;
     `;
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'PrefixExpression',
-            operator: '!',
-            right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "prefixExpression",
+              "operator": "!",
+              "right": {
+                "astType": "expression",
+                "expressionType": "integerLiteral",
+                "value": 5,
+              },
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'PrefixExpression',
-            operator: '-',
-            right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 15 },
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "prefixExpression",
+              "operator": "-",
+              "right": {
+                "astType": "expression",
+                "expressionType": "integerLiteral",
+                "value": 15,
+              },
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'PrefixExpression',
-            operator: '!',
-            right: { astType: 'Expression', expressionType: 'Identifier', value: 'foobar' },
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "prefixExpression",
+              "operator": "!",
+              "right": {
+                "astType": "expression",
+                "expressionType": "identifier",
+                "value": "foobar",
+              },
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'PrefixExpression',
-            operator: '!',
-            right: { astType: 'Expression', expressionType: 'BooleanLiteral', value: true },
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "prefixExpression",
+              "operator": "!",
+              "right": {
+                "astType": "expression",
+                "expressionType": "booleanLiteral",
+                "value": true,
+              },
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'PrefixExpression',
-            operator: '!',
-            right: { astType: 'Expression', expressionType: 'BooleanLiteral', value: false },
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "prefixExpression",
+              "operator": "!",
+              "right": {
+                "astType": "expression",
+                "expressionType": "booleanLiteral",
+                "value": false,
+              },
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
 
   it('function call', () => {
     const input = 'add(5, 3);';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'CallExpression',
-            func: { astType: 'Expression', expressionType: 'Identifier', value: 'add' },
-            args: [
-              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 },
-              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
-            ],
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "args": [
+                {
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
+                  "value": 5,
+                },
+                {
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
+                  "value": 3,
+                },
+              ],
+              "astType": "expression",
+              "expressionType": "callExpression",
+              "func": {
+                "astType": "expression",
+                "expressionType": "identifier",
+                "value": "add",
+              },
+            },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
 
   it('infix', () => {
     const input = `if (x < y) { x }`;
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'IfExpression',
-            condition: {
-              astType: 'Expression',
-              expressionType: 'InfixExpression',
-              left: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
-              operator: '<',
-              right: { astType: 'Expression', expressionType: 'Identifier', value: 'y' },
-            },
-            consequence: {
-              astType: 'Statement',
-              statementType: 'Block',
-              statements: [
-                {
-                  astType: 'Statement',
-                  statementType: 'Expression',
-                  expression: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "condition": {
+                "astType": "expression",
+                "expressionType": "infixExpression",
+                "left": {
+                  "astType": "expression",
+                  "expressionType": "identifier",
+                  "value": "x",
                 },
-              ],
+                "operator": "<",
+                "right": {
+                  "astType": "expression",
+                  "expressionType": "identifier",
+                  "value": "y",
+                },
+              },
+              "consequence": {
+                "astType": "statement",
+                "statementType": "block",
+                "statements": [
+                  {
+                    "astType": "statement",
+                    "expression": {
+                      "astType": "expression",
+                      "expressionType": "identifier",
+                      "value": "x",
+                    },
+                    "statementType": "expression",
+                  },
+                ],
+              },
+              "expressionType": "ifExpression",
             },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
 
   it('parses function calls', () => {
     const input = 'let identity = fn(x) { x; }; identity(5);';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Let',
-          name: { astType: 'Expression', expressionType: 'Identifier', value: 'identity' },
-          value: {
-            astType: 'Expression',
-            expressionType: 'FunctionLiteral',
-            parameters: [{ astType: 'Expression', expressionType: 'Identifier', value: 'x' }],
-            body: {
-              astType: 'Statement',
-              statementType: 'Block',
-              statements: [
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "name": {
+              "astType": "expression",
+              "expressionType": "identifier",
+              "value": "identity",
+            },
+            "statementType": "let",
+            "value": {
+              "astType": "expression",
+              "body": {
+                "astType": "statement",
+                "statementType": "block",
+                "statements": [
+                  {
+                    "astType": "statement",
+                    "expression": {
+                      "astType": "expression",
+                      "expressionType": "identifier",
+                      "value": "x",
+                    },
+                    "statementType": "expression",
+                  },
+                ],
+              },
+              "expressionType": "functionLiteral",
+              "parameters": [
                 {
-                  astType: 'Statement',
-                  statementType: 'Expression',
-                  expression: { astType: 'Expression', expressionType: 'Identifier', value: 'x' },
+                  "astType": "expression",
+                  "expressionType": "identifier",
+                  "value": "x",
                 },
               ],
             },
           },
-        },
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'CallExpression',
-            args: [{ astType: 'Expression', expressionType: 'IntegerLiteral', value: 5 }],
-            func: { astType: 'Expression', expressionType: 'Identifier', value: 'identity' },
+          {
+            "astType": "statement",
+            "expression": {
+              "args": [
+                {
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
+                  "value": 5,
+                },
+              ],
+              "astType": "expression",
+              "expressionType": "callExpression",
+              "func": {
+                "astType": "expression",
+                "expressionType": "identifier",
+                "value": "identity",
+              },
+            },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses strings', () => {
     const input = '"foobar" "foo bar"';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          expression: { astType: 'Expression', expressionType: 'StringLiteral', value: 'foobar' },
-          statementType: 'Expression',
-        },
-        {
-          astType: 'Statement',
-          expression: { astType: 'Expression', expressionType: 'StringLiteral', value: 'foo bar' },
-          statementType: 'Expression',
-        },
-      ],
-    });
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "stringLiteral",
+              "value": "foobar",
+            },
+            "statementType": "expression",
+          },
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "stringLiteral",
+              "value": "foo bar",
+            },
+            "statementType": "expression",
+          },
+        ],
+      }
+    `);
   });
   it('parses builtin functions', () => {
     const input = 'len("Hello World");';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'CallExpression',
-            func: { astType: 'Expression', expressionType: 'Identifier', value: 'len' },
-            args: [{ astType: 'Expression', expressionType: 'StringLiteral', value: 'Hello World' }],
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "args": [
+                {
+                  "astType": "expression",
+                  "expressionType": "stringLiteral",
+                  "value": "Hello World",
+                },
+              ],
+              "astType": "expression",
+              "expressionType": "callExpression",
+              "func": {
+                "astType": "expression",
+                "expressionType": "identifier",
+                "value": "len",
+              },
+            },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses empty arrays', () => {
     const input = '[];';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            elements: [],
-            expressionType: 'ArrayLiteral',
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "elements": [],
+              "expressionType": "arrayLiteral",
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses filled arrays', () => {
     const input = '[1, 2+3, 99];';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          expression: {
-            astType: 'Expression',
-            elements: [
-              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
-              {
-                astType: 'Expression',
-                expressionType: 'InfixExpression',
-                left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
-                operator: '+',
-                right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
-              },
-              { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
-            ],
-            expressionType: 'ArrayLiteral',
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "elements": [
+                {
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
+                  "value": 1,
+                },
+                {
+                  "astType": "expression",
+                  "expressionType": "infixExpression",
+                  "left": {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 2,
+                  },
+                  "operator": "+",
+                  "right": {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 3,
+                  },
+                },
+                {
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
+                  "value": 99,
+                },
+              ],
+              "expressionType": "arrayLiteral",
+            },
+            "statementType": "expression",
           },
-          statementType: 'Expression',
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses array indexing', () => {
     const input = '[1, 2+3, 99][2];';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'IndexExpression',
-            left: {
-              astType: 'Expression',
-              expressionType: 'ArrayLiteral',
-              elements: [
-                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
-                {
-                  astType: 'Expression',
-                  expressionType: 'InfixExpression',
-                  left: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
-                  operator: '+',
-                  right: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 3 },
-                },
-                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 99 },
-              ],
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "indexExpression",
+              "index": {
+                "astType": "expression",
+                "expressionType": "integerLiteral",
+                "value": 2,
+              },
+              "left": {
+                "astType": "expression",
+                "elements": [
+                  {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 1,
+                  },
+                  {
+                    "astType": "expression",
+                    "expressionType": "infixExpression",
+                    "left": {
+                      "astType": "expression",
+                      "expressionType": "integerLiteral",
+                      "value": 2,
+                    },
+                    "operator": "+",
+                    "right": {
+                      "astType": "expression",
+                      "expressionType": "integerLiteral",
+                      "value": 3,
+                    },
+                  },
+                  {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 99,
+                  },
+                ],
+                "expressionType": "arrayLiteral",
+              },
             },
-            index: { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses empty objects', () => {
     const input = '{}';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'ObjectLiteral',
-            pairs: [],
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "objectLiteral",
+              "pairs": [],
+            },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
   it('parses objects', () => {
     const input = '{1: 2, "foo": "bar"}';
-    expect(actual(input)).toEqual({
-      astType: 'Program',
-      body: [
-        {
-          astType: 'Statement',
-          statementType: 'Expression',
-          expression: {
-            astType: 'Expression',
-            expressionType: 'ObjectLiteral',
-            pairs: [
-              [
-                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 1 },
-                { astType: 'Expression', expressionType: 'IntegerLiteral', value: 2 },
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "program",
+        "body": [
+          {
+            "astType": "statement",
+            "expression": {
+              "astType": "expression",
+              "expressionType": "objectLiteral",
+              "pairs": [
+                [
+                  {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 1,
+                  },
+                  {
+                    "astType": "expression",
+                    "expressionType": "integerLiteral",
+                    "value": 2,
+                  },
+                ],
+                [
+                  {
+                    "astType": "expression",
+                    "expressionType": "stringLiteral",
+                    "value": "foo",
+                  },
+                  {
+                    "astType": "expression",
+                    "expressionType": "stringLiteral",
+                    "value": "bar",
+                  },
+                ],
               ],
-              [
-                { astType: 'Expression', expressionType: 'StringLiteral', value: 'foo' },
-                { astType: 'Expression', expressionType: 'StringLiteral', value: 'bar' },
-              ],
-            ],
+            },
+            "statementType": "expression",
           },
-        },
-      ],
-    });
+        ],
+      }
+    `);
   });
 
   it('parses a forEach loop correctly', () => {
     const input = 'forEach [1, 2, 3] { puts(it); }';
     expect(actual(input)).toMatchInlineSnapshot(`
       {
-        "astType": "Program",
+        "astType": "program",
         "body": [
           {
             "array": {
-              "astType": "Expression",
+              "astType": "expression",
               "elements": [
                 {
-                  "astType": "Expression",
-                  "expressionType": "IntegerLiteral",
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
                   "value": 1,
                 },
                 {
-                  "astType": "Expression",
-                  "expressionType": "IntegerLiteral",
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
                   "value": 2,
                 },
                 {
-                  "astType": "Expression",
-                  "expressionType": "IntegerLiteral",
+                  "astType": "expression",
+                  "expressionType": "integerLiteral",
                   "value": 3,
                 },
               ],
-              "expressionType": "ArrayLiteral",
+              "expressionType": "arrayLiteral",
             },
-            "astType": "Statement",
+            "astType": "statement",
             "body": {
-              "astType": "Statement",
-              "statementType": "Block",
+              "astType": "statement",
+              "statementType": "block",
               "statements": [
                 {
-                  "astType": "Statement",
+                  "astType": "statement",
                   "expression": {
                     "args": [
                       {
-                        "astType": "Expression",
-                        "expressionType": "Identifier",
+                        "astType": "expression",
+                        "expressionType": "identifier",
                         "value": "it",
                       },
                     ],
-                    "astType": "Expression",
-                    "expressionType": "CallExpression",
+                    "astType": "expression",
+                    "expressionType": "callExpression",
                     "func": {
-                      "astType": "Expression",
-                      "expressionType": "Identifier",
+                      "astType": "expression",
+                      "expressionType": "identifier",
                       "value": "puts",
                     },
                   },
-                  "statementType": "Expression",
+                  "statementType": "expression",
                 },
               ],
             },
-            "statementType": "ForEach",
+            "statementType": "forEach",
           },
         ],
       }

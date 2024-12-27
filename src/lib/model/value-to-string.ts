@@ -1,29 +1,28 @@
 import { checkExhaustive } from '../../utils';
 import { astNodeToString } from './ast-node-to-string';
 import type { Value } from './value';
-import { valueTypes } from './value';
 
 export function valueToString(value: Value): string {
   switch (value.type) {
-    case valueTypes.Null:
+    case 'null':
       return 'null';
-    case valueTypes.ReturnValue:
+    case 'returnValue':
       return valueToString(value);
-    case valueTypes.Integer:
-    case valueTypes.Boolean:
+    case 'integer':
+    case 'boolean':
       return `${value.value}`;
-    case valueTypes.String:
+    case 'string':
       return `"${value.value}"`;
-    case valueTypes.Function: {
+    case 'function': {
       const parameters = value.parameters.map(astNodeToString).join(', ');
       const body = astNodeToString(value.body);
       return `fn(${parameters}){\n${body}\n}`;
     }
-    case valueTypes.BuiltIn:
+    case 'builtIn':
       return 'builtin function';
-    case valueTypes.Array:
+    case 'array':
       return `'[${value.elements.map(valueToString).join(', ')}]`;
-    case valueTypes.Object:
+    case 'object':
       return '';
     default:
       return checkExhaustive(value);

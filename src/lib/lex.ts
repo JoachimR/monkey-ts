@@ -1,5 +1,4 @@
 import type { Token, TokenWithLiterals } from './model/token';
-import { tokenTypes } from './model/token';
 
 const eof = '\0';
 
@@ -9,32 +8,18 @@ const isWhitespace = (char: string) => /^\s$/.test(char);
 const isQuote = (char: string) => char === '"';
 const isEof = (char: string) => char === eof;
 
-const findKeywordToken = (string: string): Exclude<Token, TokenWithLiterals> | undefined => {
-  switch (string) {
-    case 'fn': {
-      return { type: tokenTypes.Function };
-    }
-    case 'let': {
-      return { type: tokenTypes.Let };
-    }
-    case 'if': {
-      return { type: tokenTypes.If };
-    }
-    case 'else': {
-      return { type: tokenTypes.Else };
-    }
-    case 'return': {
-      return { type: tokenTypes.Return };
-    }
-    case 'true': {
-      return { type: tokenTypes.True };
-    }
-    case 'false': {
-      return { type: tokenTypes.False };
-    }
-    case 'forEach': {
-      return { type: tokenTypes.ForEach };
-    }
+const findKeywordToken = (keyword: string): Exclude<Token, TokenWithLiterals> | undefined => {
+  switch (keyword) {
+    case 'fn':
+      return { type: 'function' };
+    case 'let':
+    case 'if':
+    case 'else':
+    case 'return':
+    case 'true':
+    case 'false':
+    case 'forEach':
+      return { type: keyword };
     default:
       return undefined;
   }
@@ -64,96 +49,96 @@ class Lexer {
       case '=': {
         if (this.peekChar() === '=') {
           this.readChar();
-          token = { type: tokenTypes.Equals, operator: '==' };
+          token = { type: 'equals', operator: '==' };
         } else {
-          token = { type: tokenTypes.Assign };
+          token = { type: 'assign' };
         }
         break;
       }
       case '!': {
         if (this.peekChar() === '=') {
           this.readChar();
-          token = { type: tokenTypes.NotEquals, operator: '!=' };
+          token = { type: 'notEquals', operator: '!=' };
         } else {
-          token = { type: tokenTypes.Bang, operator: '!' };
+          token = { type: 'bang', operator: '!' };
         }
         break;
       }
       case '"': {
-        token = { type: tokenTypes.String, literal: this.readString() };
+        token = { type: 'string', literal: this.readString() };
         break;
       }
       case ';': {
-        token = { type: tokenTypes.Semicolon };
+        token = { type: 'semicolon' };
         break;
       }
       case '(': {
-        token = { type: tokenTypes.LeftParenthesis };
+        token = { type: 'leftParenthesis' };
         break;
       }
       case ')': {
-        token = { type: tokenTypes.RightParenthesis };
+        token = { type: 'rightParenthesis' };
         break;
       }
       case ',': {
-        token = { type: tokenTypes.Comma };
+        token = { type: 'comma' };
         break;
       }
       case '+': {
-        token = { type: tokenTypes.Plus, operator: '+' };
+        token = { type: 'plus', operator: '+' };
         break;
       }
       case '-': {
-        token = { type: tokenTypes.Minus, operator: '-' };
+        token = { type: 'minus', operator: '-' };
         break;
       }
       case '[': {
-        token = { type: tokenTypes.LeftBracket };
+        token = { type: 'leftBracket' };
         break;
       }
       case ']': {
-        token = { type: tokenTypes.RightBracket };
+        token = { type: 'rightBracket' };
         break;
       }
       case '{': {
-        token = { type: tokenTypes.LeftBrace };
+        token = { type: 'leftBrace' };
         break;
       }
       case '}': {
-        token = { type: tokenTypes.RightBrace };
+        token = { type: 'rightBrace' };
         break;
       }
       case '*': {
-        token = { type: tokenTypes.Asterisk, operator: '*' };
+        token = { type: 'asterisk', operator: '*' };
         break;
       }
       case '/': {
-        token = { type: tokenTypes.Slash, operator: '/' };
+        token = { type: 'slash', operator: '/' };
         break;
       }
       case '<': {
-        token = { type: tokenTypes.LessThan, operator: '<' };
+        token = { type: 'lessThan', operator: '<' };
         break;
       }
       case '>': {
-        token = { type: tokenTypes.GreaterThan, operator: '>' };
+        token = { type: 'greaterThan', operator: '>' };
         break;
       }
       case '==': {
-        token = { type: tokenTypes.Equals, operator: '==' };
+        token = { type: 'equals', operator: '==' };
         break;
       }
       case '!=': {
-        token = { type: tokenTypes.NotEquals, operator: '!=' };
+        token = { type: 'notEquals', operator: '!=' };
         break;
       }
       case ':': {
-        token = { type: tokenTypes.Colon };
+        token = { type: 'colon' };
         break;
       }
       case eof: {
         this.eofReached = true;
-        token = { type: tokenTypes.Eof };
+        token = { type: 'eof' };
         break;
       }
       default: {
@@ -164,17 +149,17 @@ class Lexer {
             return keywordToken;
           }
           return {
-            type: tokenTypes.Identifier,
+            type: 'identifier',
             literal,
           };
         }
         if (isNumber(char)) {
           return {
-            type: tokenTypes.Integer,
+            type: 'integer',
             literal: this.readNumber(),
           };
         }
-        token = { type: tokenTypes.Illegal };
+        token = { type: 'illegal' };
       }
     }
 
