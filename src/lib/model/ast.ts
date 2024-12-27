@@ -6,6 +6,7 @@ export const statementTypes = {
   Expression: 'Expression',
   Block: 'Block',
   Reassign: 'Reassign',
+  ForEach: 'ForEach',
 } as const;
 
 type StatementBase = {
@@ -39,7 +40,19 @@ export type ReassignStatement = StatementBase & {
   value: Expression;
 };
 
-export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatement | ReassignStatement;
+export type ForEachStatement = StatementBase & {
+  statementType: typeof statementTypes.ForEach;
+  array: Expression;
+  body: BlockStatement;
+};
+
+export type Statement =
+  | LetStatement
+  | ReturnStatement
+  | ExpressionStatement
+  | BlockStatement
+  | ReassignStatement
+  | ForEachStatement;
 
 export const expressionTypes = {
   Identifier: 'Identifier',

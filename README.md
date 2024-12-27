@@ -9,7 +9,7 @@ However this implementation also includes the last chapters of the book (arrays,
 More functionality that might be added in the future:
 
 - [x] reassignments of variables
-- [ ] forEach loop
+- [x] forEach loop
 - [ ] ...
 
 

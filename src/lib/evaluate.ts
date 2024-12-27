@@ -5,6 +5,7 @@ import type {
   BooleanLiteralExpression,
   CallExpression,
   Expression,
+  ForEachStatement,
   FunctionLiteralExpression,
   IdentifierExpression,
   IfExpression,
@@ -75,6 +76,8 @@ function evaluateStatement(node: Statement, env: Environment): Value {
       return evaluateReturnStatement(node, env);
     case statementTypes.Reassign:
       return evaluateReassignStatement(node, env);
+    case statementTypes.ForEach:
+      return evaluateForEachStatement(node, env);
     default:
       return checkExhaustive(node);
   }
@@ -416,6 +419,18 @@ function isTruthy(arg: Value): boolean {
     default:
       return true;
   }
+}
+
+function evaluateForEachStatement(node: ForEachStatement, env: Environment): Value {
+  const array = evaluateExpression(node.array, env);
+  assert(array.type === valueTypes.Array, 'forEach can only iterate over arrays', { array });
+  let result: Value = { type: valueTypes.Null };
+  for (const element of array.elements) {
+    const itEnv = createEnvironment(env);
+    storeInEnvironment(itEnv, 'it', element);
+    result = evaluateBlockStatement(node.body, itEnv);
+  }
+  return result;
 }
 
 const builtins: Record<string, ValueBuiltIn> = {

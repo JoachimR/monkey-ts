@@ -6,19 +6,29 @@ export type Environment = {
   outer?: Environment;
 };
 
-export function getFromEnvironment(env: Environment, name: string): Value | undefined {
-  const value = env.store[name];
-  if (value) {
-    return value;
+function findEnvironmentForKey(env: Environment, key: string): Environment | undefined {
+  if (env.store[key]) {
+    return env;
   }
   if (env.outer) {
-    return getFromEnvironment(env.outer, name);
+    return findEnvironmentForKey(env.outer, key);
   }
   return undefined;
 }
 
-export function storeInEnvironment(env: Environment, name: string, value: Value): void {
-  env.store[name] = value;
+export function getFromEnvironment(env: Environment, key: string): Value | undefined {
+  return findEnvironmentForKey(env, key)?.store[key];
+}
+
+export function storeInEnvironment(env: Environment, key: string, value: Value): void {
+  const envToStore = findEnvironmentForKey(env, key) ?? env;
+  if (envToStore) {
+    // update value in current or some outer store
+    envToStore.store[key] = value;
+  } else {
+    // new entry in current store
+    env.store[key] = value;
+  }
 }
 
 export const createEnvironment = (
@@ -27,7 +37,7 @@ export const createEnvironment = (
 ): Environment => {
   const env: Environment = {
     store: {},
-    outer: outer,
+    outer,
   };
   if (context) {
     for (let i = 0; i < context.parameters.length; i++) {

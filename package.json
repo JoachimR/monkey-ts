@@ -8,7 +8,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint:fix": "eslint . --ext .ts --fix",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",

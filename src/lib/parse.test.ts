@@ -351,4 +351,66 @@ describe('parse', () => {
       ],
     });
   });
+
+  it('parses a forEach loop correctly', () => {
+    const input = 'forEach [1, 2, 3] { puts(it); }';
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "astType": "Program",
+        "body": [
+          {
+            "array": {
+              "astType": "Expression",
+              "elements": [
+                {
+                  "astType": "Expression",
+                  "expressionType": "IntegerLiteral",
+                  "value": 1,
+                },
+                {
+                  "astType": "Expression",
+                  "expressionType": "IntegerLiteral",
+                  "value": 2,
+                },
+                {
+                  "astType": "Expression",
+                  "expressionType": "IntegerLiteral",
+                  "value": 3,
+                },
+              ],
+              "expressionType": "ArrayLiteral",
+            },
+            "astType": "Statement",
+            "body": {
+              "astType": "Statement",
+              "statementType": "Block",
+              "statements": [
+                {
+                  "astType": "Statement",
+                  "expression": {
+                    "args": [
+                      {
+                        "astType": "Expression",
+                        "expressionType": "Identifier",
+                        "value": "it",
+                      },
+                    ],
+                    "astType": "Expression",
+                    "expressionType": "CallExpression",
+                    "func": {
+                      "astType": "Expression",
+                      "expressionType": "Identifier",
+                      "value": "puts",
+                    },
+                  },
+                  "statementType": "Expression",
+                },
+              ],
+            },
+            "statementType": "ForEach",
+          },
+        ],
+      }
+    `);
+  });
 });

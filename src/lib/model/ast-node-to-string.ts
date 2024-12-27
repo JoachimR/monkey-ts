@@ -18,6 +18,10 @@ export function astNodeToString(node: AstNode): string {
           return node.statements.map(astNodeToString).join('');
         case statementTypes.Reassign:
           return `${astNodeToString(node.name)} = ${astNodeToString(node.value)};`;
+        case statementTypes.ForEach:
+          return `${node.statementType} in ${astNodeToString(node.array)}; { ${node.body.statements
+            .map(astNodeToString)
+            .join('')} } `;
         default:
           return checkExhaustive(node);
       }

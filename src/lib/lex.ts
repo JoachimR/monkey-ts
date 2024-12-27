@@ -32,6 +32,9 @@ const findKeywordToken = (string: string): Exclude<Token, TokenWithLiterals> | u
     case 'false': {
       return { type: tokenTypes.False };
     }
+    case 'forEach': {
+      return { type: tokenTypes.ForEach };
+    }
     default:
       return undefined;
   }
