@@ -6,4 +6,11 @@ This is a TypeScript implementation of the Monkey programming language, as descr
 
 However this implementation also includes the last chapters of the book (arrays, objects, builtin functions and their usages).
 
+More functionality that might be added in the future:
+
+- [x] reassignments of variables
+- [ ] forEach loop
+- [ ] ...
+
+
 
