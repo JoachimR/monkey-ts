@@ -534,6 +534,16 @@ describe('evaluate', () => {
     `);
   });
 
+  it('evaluates variable reassignment with expression on the right side', () => {
+    const input = 'let x = 12; x = 2 + 3;';
+    expect(actual(input)).toMatchInlineSnapshot(`
+      {
+        "type": "integer",
+        "value": 5,
+      }
+    `);
+  });
+
   it('throws error when reassigning undefined variable', () => {
     const input = 'x = 13;';
     expect(() => actual(input)).toThrow('cannot reassign undefined variable');
