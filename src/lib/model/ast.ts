@@ -5,6 +5,7 @@ export const statementTypes = {
   Return: 'Return',
   Expression: 'Expression',
   Block: 'Block',
+  Reassign: 'Reassign',
 } as const;
 
 type StatementBase = {
@@ -32,7 +33,13 @@ export type BlockStatement = StatementBase & {
   statements: Statement[];
 };
 
-export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatement;
+export type ReassignStatement = StatementBase & {
+  statementType: typeof statementTypes.Reassign;
+  name: IdentifierExpression;
+  value: Expression;
+};
+
+export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatement | ReassignStatement;
 
 export const expressionTypes = {
   Identifier: 'Identifier',
