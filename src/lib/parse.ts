@@ -6,6 +6,7 @@ import type {
   CallExpression,
   Expression,
   ExpressionStatement,
+  ForEachStatement,
   FunctionLiteralExpression,
   IdentifierExpression,
   IfExpression,
@@ -120,6 +121,8 @@ class Parser {
         }
         return this.parseExpressionStatement();
       }
+      case tokenTypes.ForEach:
+        return this.parseForEachStatement();
       default:
         return this.parseExpressionStatement();
     }
@@ -457,6 +460,22 @@ class Parser {
     }
     this.nextTokenExpecting(endTokenType);
     return args;
+  }
+
+  private parseForEachStatement(): ForEachStatement {
+    this.nextToken();
+    const array = this.parseExpression(Precedence.Lowest);
+
+    this.nextTokenExpecting(tokenTypes.LeftBrace);
+
+    const body = this.parseBlockStatement();
+
+    return {
+      astType: astNodeTypes.Statement,
+      statementType: statementTypes.ForEach,
+      array,
+      body,
+    };
   }
 
   private nextToken() {

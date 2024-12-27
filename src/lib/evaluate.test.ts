@@ -338,4 +338,17 @@ describe('evaluate', () => {
     const input = 'x = 13;';
     expect(() => actual(input)).toThrow('cannot reassign undefined variable');
   });
+
+  it('evaluates forEach loop', () => {
+    const input = `
+      let sum = 0;
+      let arr = [1, 2, 3, 4, 5];
+      forEach arr {
+        sum = sum + it;
+      }
+      sum
+    `;
+
+    expect(actual(input)).toEqual({ type: 'Integer', value: 15 });
+  });
 });

@@ -178,4 +178,25 @@ describe('lex', () => {
       { type: 'Eof' },
     ]);
   });
+
+  it('forEach loop', () => {
+    expect(actual('forEach [1, 2, 3] { puts(it); }')).toEqual([
+      { type: 'ForEach' },
+      { type: 'LeftBracket' },
+      { literal: '1', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '2', type: 'Integer' },
+      { type: 'Comma' },
+      { literal: '3', type: 'Integer' },
+      { type: 'RightBracket' },
+      { type: 'LeftBrace' },
+      { literal: 'puts', type: 'Identifier' },
+      { type: 'LeftParenthesis' },
+      { literal: 'it', type: 'Identifier' },
+      { type: 'RightParenthesis' },
+      { type: 'Semicolon' },
+      { type: 'RightBrace' },
+      { type: 'Eof' },
+    ]);
+  });
 });

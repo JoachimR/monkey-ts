@@ -40,6 +40,7 @@ export const tokenTypes = {
   Equals: 'Equals',
   NotEquals: 'NotEquals',
   Colon: 'Colon',
+  ForEach: 'ForEach',
 } as const;
 
 export type TokenType = (typeof tokenTypes)[keyof typeof tokenTypes];
@@ -149,6 +150,9 @@ export type NotEqualsToken = {
   type: typeof tokenTypes.NotEquals;
   operator: typeof NotEqualsOperator;
 };
+export type ForEachToken = {
+  type: typeof tokenTypes.ForEach;
+};
 
 export type TokenWithLiterals = IdentifierToken | IntegerToken | StringToken;
 export type TokenWithoutLiterals =
@@ -179,7 +183,8 @@ export type TokenWithoutLiterals =
   | FalseToken
   | EqualsToken
   | NotEqualsToken
-  | ColonToken;
+  | ColonToken
+  | ForEachToken;
 
 export type Token = TokenWithLiterals | TokenWithoutLiterals;
 
