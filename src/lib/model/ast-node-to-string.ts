@@ -16,6 +16,8 @@ export function astNodeToString(node: AstNode): string {
           return `${astNodeToString(node.expression)}`;
         case statementTypes.Block:
           return node.statements.map(astNodeToString).join('');
+        case statementTypes.Reassign:
+          return `${astNodeToString(node.name)} = ${astNodeToString(node.value)};`;
         default:
           return checkExhaustive(node);
       }

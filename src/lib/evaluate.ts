@@ -15,6 +15,7 @@ import type {
   ObjectLiteralExpression,
   PrefixExpression,
   Program,
+  ReassignStatement,
   ReturnStatement,
   Statement,
   StringLiteralExpression,
@@ -72,6 +73,8 @@ function evaluateStatement(node: Statement, env: Environment): Value {
       return evaluateBlockStatement(node, env);
     case statementTypes.Return:
       return evaluateReturnStatement(node, env);
+    case statementTypes.Reassign:
+      return evaluateReassignStatement(node, env);
     default:
       return checkExhaustive(node);
   }
@@ -255,6 +258,14 @@ function evaluateReturnStatement(node: ReturnStatement, env: Environment): Value
     type: valueTypes.ReturnValue,
     value: evaluateExpression(node.value, env),
   };
+}
+
+function evaluateReassignStatement(node: ReassignStatement, env: Environment): Value {
+  const value = evaluateExpression(node.value, env);
+  const existingValue = getFromEnvironment(env, node.name.value);
+  assert(existingValue !== undefined, 'cannot reassign undefined variable', { node });
+  storeInEnvironment(env, node.name.value, value);
+  return value;
 }
 
 function evaluateArrayLiteralExpression(node: ArrayLiteralExpression, env: Environment): Value {

@@ -16,6 +16,7 @@ import type {
   ObjectLiteralExpression,
   PrefixExpression,
   Program,
+  ReassignStatement,
   ReturnStatement,
   Statement,
   StringLiteralExpression,
@@ -113,6 +114,12 @@ class Parser {
         return this.parseLetStatement();
       case tokenTypes.Return:
         return this.parseReturnStatement();
+      case tokenTypes.Identifier: {
+        if (this.peekToken?.type === tokenTypes.Assign) {
+          return this.parseReassignStatement();
+        }
+        return this.parseExpressionStatement();
+      }
       default:
         return this.parseExpressionStatement();
     }
@@ -166,6 +173,29 @@ class Parser {
       astType: astNodeTypes.Statement,
       statementType: statementTypes.Expression,
       expression,
+    };
+  }
+
+  private parseReassignStatement(): ReassignStatement {
+    const literal = (this.currentToken as IdentifierToken).literal;
+    this.nextTokenExpecting(tokenTypes.Assign);
+
+    this.nextToken();
+    const value = this.parseExpression(Precedence.Lowest);
+
+    if (this.peekToken?.type === tokenTypes.Semicolon) {
+      this.nextToken();
+    }
+
+    return {
+      astType: astNodeTypes.Statement,
+      statementType: statementTypes.Reassign,
+      name: {
+        astType: astNodeTypes.Expression,
+        expressionType: expressionTypes.Identifier,
+        value: literal,
+      },
+      value,
     };
   }
 

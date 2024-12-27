@@ -325,4 +325,17 @@ describe('evaluate', () => {
       value: 10,
     });
   });
+
+  it('evaluates variable reassignment', () => {
+    const input = 'let x = 12; x = 13;';
+    expect(actual(input)).toEqual({
+      type: 'Integer',
+      value: 13,
+    });
+  });
+
+  it('throws error when reassigning undefined variable', () => {
+    const input = 'x = 13;';
+    expect(() => actual(input)).toThrow('cannot reassign undefined variable');
+  });
 });
