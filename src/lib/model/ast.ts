@@ -1,47 +1,40 @@
 import type { InfixToken, PrefixToken } from './token';
 
-export const statementTypes = {
-  Let: 'Let',
-  Return: 'Return',
-  Expression: 'Expression',
-  Block: 'Block',
-  Reassign: 'Reassign',
-  ForEach: 'ForEach',
-} as const;
-
-type StatementBase = {
-  astType: typeof astNodeTypes.Statement;
-};
-
-export type LetStatement = StatementBase & {
-  statementType: typeof statementTypes.Let;
+export type LetStatement = {
+  astType: 'statement';
+  statementType: 'let';
   name: IdentifierExpression;
   value: Expression;
 };
 
-export type ReturnStatement = StatementBase & {
-  statementType: typeof statementTypes.Return;
+export type ReturnStatement = {
+  astType: 'statement';
+  statementType: 'return';
   value: Expression;
 };
 
-export type ExpressionStatement = StatementBase & {
-  statementType: typeof statementTypes.Expression;
+export type ExpressionStatement = {
+  astType: 'statement';
+  statementType: 'expression';
   expression: Expression;
 };
 
-export type BlockStatement = StatementBase & {
-  statementType: typeof statementTypes.Block;
+export type BlockStatement = {
+  astType: 'statement';
+  statementType: 'block';
   statements: Statement[];
 };
 
-export type ReassignStatement = StatementBase & {
-  statementType: typeof statementTypes.Reassign;
+export type ReassignStatement = {
+  astType: 'statement';
+  statementType: 'reassign';
   name: IdentifierExpression;
   value: Expression;
 };
 
-export type ForEachStatement = StatementBase & {
-  statementType: typeof statementTypes.ForEach;
+export type ForEachStatement = {
+  astType: 'statement';
+  statementType: 'forEach';
   array: Expression;
   body: BlockStatement;
 };
@@ -54,89 +47,82 @@ export type Statement =
   | ReassignStatement
   | ForEachStatement;
 
-export const expressionTypes = {
-  Identifier: 'Identifier',
-  IntegerLiteral: 'IntegerLiteral',
-  BooleanLiteral: 'BooleanLiteral',
-  PrefixExpression: 'PrefixExpression',
-  InfixExpression: 'InfixExpression',
-  IfExpression: 'IfExpression',
-  FunctionLiteral: 'FunctionLiteral',
-  CallExpression: 'CallExpression',
-  StringLiteral: 'StringLiteral',
-  ArrayLiteral: 'ArrayLiteral',
-  IndexExpression: 'IndexExpression',
-  ObjectLiteral: 'ObjectLiteral',
-} as const;
-
-type ExpressionBase = {
-  astType: typeof astNodeTypes.Expression;
-};
-
-export type IdentifierExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.Identifier;
+export type IdentifierExpression = {
+  astType: 'expression';
+  expressionType: 'identifier';
   value: string;
 };
 
-export type IntegerLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.IntegerLiteral;
+export type IntegerLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'integerLiteral';
   value: number;
 };
 
-export type StringLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.StringLiteral;
+export type StringLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'stringLiteral';
   value: string;
 };
 
-export type ArrayLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.ArrayLiteral;
+export type ArrayLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'arrayLiteral';
   elements: Expression[];
 };
 
-export type ObjectLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.ObjectLiteral;
+export type ObjectLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'objectLiteral';
   pairs: [Expression, Expression][];
 };
 
-export type IndexExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.IndexExpression;
+export type IndexExpression = {
+  astType: 'expression';
+  expressionType: 'indexExpression';
   left: Expression;
   index: Expression;
 };
 
-export type BooleanLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.BooleanLiteral;
+export type BooleanLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'booleanLiteral';
   value: boolean;
 };
 
-export type FunctionLiteralExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.FunctionLiteral;
+export type FunctionLiteralExpression = {
+  astType: 'expression';
+  expressionType: 'functionLiteral';
   parameters: IdentifierExpression[];
   body: BlockStatement;
 };
 
-export type PrefixExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.PrefixExpression;
+export type PrefixExpression = {
+  astType: 'expression';
+  expressionType: 'prefixExpression';
   operator: PrefixToken['operator'];
   right: Expression;
 };
 
-export type InfixExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.InfixExpression;
+export type InfixExpression = {
+  astType: 'expression';
+  expressionType: 'infixExpression';
   operator: InfixToken['operator'];
   left: Expression;
   right: Expression;
 };
 
-export type IfExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.IfExpression;
+export type IfExpression = {
+  astType: 'expression';
+  expressionType: 'ifExpression';
   condition: Expression;
   consequence: BlockStatement;
   alternative?: BlockStatement;
 };
 
-export type CallExpression = ExpressionBase & {
-  expressionType: typeof expressionTypes.CallExpression;
+export type CallExpression = {
+  astType: 'expression';
+  expressionType: 'callExpression';
   func: IdentifierExpression | FunctionLiteralExpression;
   args: Expression[];
 };
@@ -147,23 +133,17 @@ export type Expression =
   | StringLiteralExpression
   | ArrayLiteralExpression
   | ObjectLiteralExpression
+  | IndexExpression
   | BooleanLiteralExpression
   | FunctionLiteralExpression
   | PrefixExpression
   | InfixExpression
-  | IndexExpression
   | IfExpression
   | CallExpression;
 
 export type AstNode = Statement | Expression | Program;
 
-export const astNodeTypes = {
-  Statement: 'Statement',
-  Expression: 'Expression',
-  Program: 'Program',
-} as const;
-
 export type Program = {
-  astType: typeof astNodeTypes.Program;
+  astType: 'program';
   body: Statement[];
 };

@@ -1,44 +1,32 @@
 import type { BlockStatement, IdentifierExpression } from './ast';
 import type { Environment } from './environment';
 
-export const valueTypes = {
-  Null: 'Null',
-  ReturnValue: 'ReturnValue',
-  Integer: 'Integer',
-  Boolean: 'Boolean',
-  String: 'String',
-  Function: 'Function',
-  BuiltIn: 'BuiltIn',
-  Array: 'Array',
-  Object: 'Object',
-} as const;
-
 export type ValueInteger = {
-  type: typeof valueTypes.Integer;
+  type: 'integer';
   value: number;
 };
 
 export type ValueString = {
-  type: typeof valueTypes.String;
+  type: 'string';
   value: string;
 };
 
 export type ValueBoolean = {
-  type: typeof valueTypes.Boolean;
+  type: 'boolean';
   value: boolean;
 };
 
 export type ValueNull = {
-  type: typeof valueTypes.Null;
+  type: 'null';
 };
 
 export type ValueReturnValue = {
-  type: typeof valueTypes.ReturnValue;
+  type: 'returnValue';
   value: Value;
 };
 
 export type ValueFunction = {
-  type: typeof valueTypes.Function;
+  type: 'function';
   parameters: IdentifierExpression[];
   body: BlockStatement;
   environment: Environment;
@@ -47,12 +35,12 @@ export type ValueFunction = {
 export type BuiltInFn = (...args: Value[]) => Value;
 
 export type ValueBuiltIn = {
-  type: typeof valueTypes.BuiltIn;
+  type: 'builtIn';
   fn: BuiltInFn;
 };
 
 export type ValueArray = {
-  type: typeof valueTypes.Array;
+  type: 'array';
   elements: Value[];
 };
 
@@ -62,7 +50,7 @@ export type ValueObjectEntry = {
   value: Value;
 };
 export type ValueObject = {
-  type: typeof valueTypes.Object;
+  type: 'object';
   pairs: Record<HashKey, ValueObjectEntry>;
 };
 
